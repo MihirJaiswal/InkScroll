@@ -1,22 +1,34 @@
-// controllers/mangaController.js
 const Manga = require('../models/Manga');
-const path = require('path');
 const fs = require('fs');
+const axios = require('axios');  // Assuming you'll use axios for API requests
 
 exports.uploadManga = async (req, res) => {
   const { title, description } = req.body;
-  const file = req.file;
+  const pdfFile = req.file;
+  console.log('uploadManga called');
+  console.log('req.body:', req.body);
+  console.log('req.file:', req.file);
 
-  if (!file) {
-    return res.status(400).json({ msg: 'No file uploaded' });
+  if (!pdfFile) {
+    console.error('No PDF file uploaded');
+    return res.status(400).json({ msg: 'No PDF file uploaded' });
   }
 
-  try {
+ /*  try {
+    // Check PDF for NSFW content using an AI API
+    const nsfwCheckResponse = await axios.post('YOUR_NSFW_API_ENDPOINT', {
+      file: pdfFile.path,
+      // Include any other required parameters for the API
+    });
+
+    const isNsfw = nsfwCheckResponse.data.is_nsfw;
+
     const manga = new Manga({
       title,
       description,
       author: req.user.id,
-      image: file.path,
+      pdf: pdfFile.path,
+      nsfw: isNsfw,
     });
 
     await manga.save();
@@ -25,6 +37,26 @@ exports.uploadManga = async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server error');
   }
+}; */
+
+try {
+  console.log('Skipping NSFW content check');
+
+  const manga = new Manga({
+    title,
+    description,
+    author: req.user.id,
+    pdf: pdfFile.path,
+    nsfw: false, // Temporarily setting this to false
+  });
+
+  await manga.save();
+  console.log('Manga saved successfully:', manga);
+  res.json(manga);
+} catch (err) {
+  console.error('Error during upload process:', err);
+  res.status(500).send('Server error');
+}
 };
 
 exports.getMangas = async (req, res) => {

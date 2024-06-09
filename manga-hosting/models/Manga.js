@@ -1,4 +1,3 @@
-// models/Manga.js
 const mongoose = require('mongoose');
 
 const MangaSchema = new mongoose.Schema({
@@ -14,9 +13,13 @@ const MangaSchema = new mongoose.Schema({
     ref: 'User',
     required: true,
   },
-  image: {
+  pdf: {
     type: String,
     required: true,
+  },
+  nsfw: {
+    type: Boolean,
+    default: false,
   },
   createdAt: {
     type: Date,
