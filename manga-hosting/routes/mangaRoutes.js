@@ -1,5 +1,6 @@
+//mangaRouter.js
 const express = require('express');
-const { uploadManga, getMangas } = require('../controllers/mangaController');
+const { uploadManga, getMangas,getMangaByTitle } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -45,5 +46,10 @@ router.post('/', authMiddleware, upload.single('pdf'), uploadManga);
 // @desc    Get all mangas
 // @access  Public
 router.get('/', getMangas);
+
+// @route   GET api/mangas/:title
+// @desc    Get manga by title
+// @access  Public
+router.get('/:title', getMangaByTitle);
 
 module.exports = router;

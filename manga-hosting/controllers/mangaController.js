@@ -3,8 +3,9 @@ const fs = require('fs');
 const axios = require('axios');  // Assuming you'll use axios for API requests
 
 exports.uploadManga = async (req, res) => {
-  const { title, description } = req.body;
+  const { title, description, genre } = req.body;
   const pdfFile = req.file;
+  const coverImage = req.body.coverImage
   console.log('uploadManga called');
   console.log('req.body:', req.body);
   console.log('req.file:', req.file);
@@ -47,6 +48,8 @@ try {
     description,
     author: req.user.id,
     pdf: pdfFile.path,
+    coverImage,
+    genre,
     nsfw: false, // Temporarily setting this to false
   });
 
@@ -63,6 +66,22 @@ exports.getMangas = async (req, res) => {
   try {
     const mangas = await Manga.find().populate('author', ['username']);
     res.json(mangas);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+
+exports.getMangaByTitle = async (req, res) => {
+  const title = req.params.title;
+
+  try {
+    const manga = await Manga.findOne({ title });
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+    res.json(manga);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server error');

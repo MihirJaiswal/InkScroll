@@ -17,6 +17,14 @@ const MangaSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  coverImage: {
+    type: String, // Assuming the cover image is stored as a URL
+    required: true,
+  },
+  genre: {
+    type: String,
+    required: true,
+  },
   nsfw: {
     type: Boolean,
     default: false,
