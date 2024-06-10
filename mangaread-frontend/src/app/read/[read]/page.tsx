@@ -1,24 +1,21 @@
-'use client'
-import { usePDF } from 'react-to-pdf';
+'use client';
 import { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 function PDFViewer() {
   const pathname = usePathname();
   const [pdfUrl, setPdfUrl] = useState('');
-  const { toPDF, targetRef } = usePDF({ filename: 'page.pdf' });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchPdf = async () => {
       try {
-        let pdfName = pathname.split('/').pop(); // Extract the PDF filename from the pathname
-        
+        let pdfName = pathname.split('/').pop();
         const response = await fetch(`http://localhost:5000/api/pdfs/${pdfName}`, {
           headers: {
             'Content-Type': 'application/pdf',
             'Content-Disposition': `inline; filename="${pdfName}"`,
           },
-          //here if link contain uploads word just remove
         });
         if (!response.ok) {
           throw new Error('Failed to fetch PDF');
@@ -26,14 +23,14 @@ function PDFViewer() {
         const pdfData = await response.blob();
         const url = URL.createObjectURL(pdfData);
         setPdfUrl(url);
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching PDF:', error);
-        // Optionally handle the error, e.g., display an error message to the user
+        setLoading(false);
       }
     };
 
     fetchPdf();
-    // Cleanup function to revoke the object URL
     return () => {
       if (pdfUrl) {
         URL.revokeObjectURL(pdfUrl);
@@ -42,11 +39,21 @@ function PDFViewer() {
   }, [pathname]);
 
   return (
-    <div>
-      {pdfUrl && (
-        <div ref={targetRef} className='flex flex-col items-center'>
-          <button onClick={() => toPDF()}>Download PDF</button>
-          <embed src={pdfUrl} type="application/pdf" className='w-full md:w-[50%] h-[100vh]' /> 
+    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+      {loading ? (
+        <div className="text-center">
+          <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32 mb-4"></div>
+          <h2 className="text-2xl font-semibold text-gray-700">Loading...</h2>
+        </div>
+      ) : (
+        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+          {pdfUrl && (
+            <embed
+              src={pdfUrl}
+              type="application/pdf"
+              className="w-full h-screen"
+            />
+          )}
         </div>
       )}
     </div>
@@ -54,4 +61,3 @@ function PDFViewer() {
 }
 
 export default PDFViewer;
-

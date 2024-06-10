@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
@@ -38,36 +38,36 @@ const MangaList: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-0">
       <div className="py-12 text-center md:text-left">
-        <h1 className="py-2 text-3xl text-black font-bold">Mangas</h1>
+        <h1 className="py-2 text-4xl text-gray-900 font-bold">Mangas</h1>
       </div>
       <motion.div
-        className="grid grid-cols-2 gap-4 md:grid-cols-5 md:gap-6 justify-center pb-12"
+        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
         initial={{ opacity: 0 }}
-        whileInView={{ opacity: 1 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: 0.2, duration: 1 }}
       >
         {loading ? (
-          <div className="m-4">
-            Loading....
+          <div className="col-span-full text-center text-lg text-gray-700">
+            Loading...
           </div>
         ) : (
-          mangas.map(({title, description, pdf}, _id) => (
+          mangas.map(({ _id, title, description, pdf }) => (
             <Link href={`/${title}`} key={_id}>
               <motion.div
-                className="flex flex-col items-center rounded-lg p-4 bg-gray-100 cursor-pointer bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-white"
+                className="flex flex-col items-center rounded-lg p-4 bg-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}
               >
-                <div className="md:w-44 md:h-40 w-24 h-24 mb-4">
+                <div className="md:w-44 md:h-40 w-32 h-32 mb-4">
                   <img
                     src={`/uploads/${pdf}`}
                     alt={title}
-                    className="object-contain w-full h-full rounded-lg"
+                    className="object-cover w-full h-full rounded-lg"
                   />
                 </div>
-                <div className="flex flex-col items-center">
-                  <h1 className="md:text-xl text-center font-semibold mb-2 text-[#B70E28]">{title}</h1>
+                <div className="flex flex-col items-center text-center">
+                  <h1 className="text-lg md:text-xl font-semibold mb-2 text-[#B70E28]">{title}</h1>
                   <p className="text-sm text-gray-500">{description}</p>
                 </div>
               </motion.div>

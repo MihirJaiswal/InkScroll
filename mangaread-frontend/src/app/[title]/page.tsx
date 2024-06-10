@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -57,26 +57,37 @@ const MangaDetail: React.FC = () => {
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 
   return (
-    <div>
-      <h1>{manga.title}</h1>
-      <p>{manga.description}</p>
-      {manga.pdf && (
-        <button>
-          <Link href={`/read/${newurl}`}>View PDF</Link>
-        </button>
-      )}
-
-      {manga.nsfw && <p style={{ color: 'red' }}>NSFW</p>}
-
-      <h2>Chapters</h2>
-      <ul>
-        {manga.chapters.map(chapter => (
-          <li key={chapter._id}>
-            <p>Chapter {chapter.chapterNumber}: {chapter.title}</p>
-            <Link href={`/read/${newurl}`}>Read Chapter</Link>
-          </li>
-        ))}
-      </ul>
+    <div className="container mx-auto px-4">
+      <div className="py-8">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4">{manga.title}</h1>
+        <div className="flex items-center mb-4">
+          <img src={manga.img} alt={manga.title} className="w-24 h-24 rounded-lg mr-4 object-cover" />
+          <div>
+            <p className="text-gray-700 mb-2">{manga.description}</p>
+            {manga.nsfw && <p className="text-red-500 font-semibold">NSFW</p>}
+          </div>
+        </div>
+        {manga.pdf && (
+          <div className="mb-4">
+            <Link href={`/read/${newurl}`} passHref>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">View PDF</button>
+            </Link>
+          </div>
+        )}
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">Chapters</h2>
+        <ul>
+          {manga.chapters.map(chapter => (
+            <li key={chapter._id} className="mb-2">
+              <p className="text-gray-700">
+                <span className="font-semibold">Chapter {chapter.chapterNumber}:</span> {chapter.title}
+              </p>
+              <Link href={`/read/${newurl}`}>
+                <p className="text-blue-500 hover:underline">Read Chapter</p>
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
     </div>
   );
 };
