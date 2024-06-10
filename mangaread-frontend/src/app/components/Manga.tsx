@@ -2,12 +2,14 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { Console } from 'console';
 
 interface Manga {
   _id: string;
   title: string;
   description: string;
   pdf: string;
+  coverImage: string;
   nsfw: boolean;
 }
 
@@ -22,6 +24,7 @@ const MangaList: React.FC = () => {
         if (response.ok) {
           const data = await response.json();
           setMangas(data);
+          console.log(data)
         } else {
           throw new Error('Failed to fetch mangas');
         }
@@ -38,7 +41,7 @@ const MangaList: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-0">
       <div className="py-12 text-center md:text-left">
-        <h1 className="py-2 text-4xl text-gray-900 font-bold">Mangas</h1>
+        <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
       </div>
       <motion.div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6"
@@ -51,8 +54,8 @@ const MangaList: React.FC = () => {
             Loading...
           </div>
         ) : (
-          mangas.map(({ _id, title, description, pdf }) => (
-            <Link href={`/${title}`} key={_id}>
+          mangas.map(({ _id, title, description, pdf, coverImage}) => (
+            <Link href={`/${title}`} key={title}>
               <motion.div
                 className="flex flex-col items-center rounded-lg p-4 bg-white shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: 50 }}
@@ -61,7 +64,7 @@ const MangaList: React.FC = () => {
               >
                 <div className="md:w-44 md:h-40 w-32 h-32 mb-4">
                   <img
-                    src={`/uploads/${pdf}`}
+                    src={`/uploads/${coverImage}`}
                     alt={title}
                     className="object-cover w-full h-full rounded-lg"
                   />

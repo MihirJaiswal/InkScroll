@@ -52,41 +52,47 @@ const MangaDetail: React.FC = () => {
     };
   }, [title]);
 
-  if (!manga) return <div>Loading....</div>;
+  if (!manga) return <div className='h-screen'>Loading....</div>;
 
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 
   return (
-    <div className="container mx-auto px-4">
+    <div className="container mx-auto px-4 h-screen">
       <div className="py-8">
-        <h1 className="text-3xl font-bold text-gray-800 mb-4">{manga.title}</h1>
-        <div className="flex items-center mb-4">
-          <img src={manga.img} alt={manga.title} className="w-24 h-24 rounded-lg mr-4 object-cover" />
+        <h1 className="text-3xl font-bold text-gray-100 mb-4 text-center">{manga.title}</h1>
+        <div className="flex flex-col justify-center items-center mb-4">
+          <img src="https://m.media-amazon.com/images/I/81X5Wy1uMUL._AC_UF1000,1000_QL80_.jpg" alt={manga.title} className="w-44 h-auto rounded-lg m-4 object-contain" />
           <div>
-            <p className="text-gray-700 mb-2">{manga.description}</p>
+            <p className="text-gray-200 m-2">{manga.description}</p>
             {manga.nsfw && <p className="text-red-500 font-semibold">NSFW</p>}
           </div>
         </div>
         {manga.pdf && (
-          <div className="mb-4">
+          <div className="mb-4 flex justify-center">
             <Link href={`/read/${newurl}`} passHref>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">View PDF</button>
+              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Start Reading</button>
             </Link>
           </div>
         )}
-        <h2 className="text-xl font-semibold text-gray-800 mb-2">Chapters</h2>
+        <div className='flex flex-col justify-center items-center'>
+        <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
         <ul>
           {manga.chapters.map(chapter => (
-            <li key={chapter._id} className="mb-2">
-              <p className="text-gray-700">
-                <span className="font-semibold">Chapter {chapter.chapterNumber}:</span> {chapter.title}
+            <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
+              <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
+                <h2 className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
               </p>
               <Link href={`/read/${newurl}`}>
-                <p className="text-blue-500 hover:underline">Read Chapter</p>
+               <div className='flex items-center justify-center m-4'>
+               <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+               <p className="hover:underline">Read Chapter</p>
+               </button>
+               </div>
               </Link>
             </li>
           ))}
         </ul>
+        </div>
       </div>
     </div>
   );

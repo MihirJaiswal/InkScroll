@@ -39,19 +39,19 @@ function PDFViewer() {
   }, [pathname]);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
+    <div className="flex justify-center items-center min-h-screen bg-gray-100">
       {loading ? (
         <div className="text-center">
           <div className="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32 mb-4"></div>
           <h2 className="text-2xl font-semibold text-gray-700">Loading...</h2>
         </div>
       ) : (
-        <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+        <div className="bg-white shadow-lg rounded-lg">
           {pdfUrl && (
             <embed
               src={pdfUrl}
               type="application/pdf"
-              className="w-full h-screen"
+              className="w-[100vw] h-screen"
             />
           )}
         </div>
