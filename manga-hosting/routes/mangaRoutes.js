@@ -1,6 +1,5 @@
-//mangaRouter.js
 const express = require('express');
-const { uploadManga, getMangas,getMangaByTitle } = require('../controllers/mangaController');
+const { uploadManga, getMangas, getMangaByTitle, addChapter } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -25,22 +24,40 @@ const upload = multer({
   storage: storage,
   limits: { fileSize: 5000000 }, // 5 MB limit for PDF files
   fileFilter: (req, file, cb) => {
-    const filetypes = /pdf/;
-    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-    const mimetype = filetypes.test(file.mimetype);
+    if (file.fieldname === 'pdf') {
+      const filetypes = /pdf/;
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = filetypes.test(file.mimetype);
 
-    if (mimetype && extname) {
-      return cb(null, true);
-    } else {
-      cb('Error: PDF Files Only!');
+      if (mimetype && extname) {
+        return cb(null, true);
+      } else {
+        cb(new Error('Error: PDF Files Only!'));
+      }
+    } else if (file.fieldname === 'coverImage') {
+      // Allow all image types for coverImage
+      const filetypes = /jpeg|jpg|png/;
+      const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+      const mimetype = filetypes.test(file.mimetype);
+
+      if (mimetype && extname) {
+        return cb(null, true);
+      } else {
+        cb(new Error('Error: Image Files Only!'));
+      }
     }
-  },
+  }
 });
+
+const uploadFields = upload.fields([
+  { name: 'pdf', maxCount: 1 },
+  { name: 'coverImage', maxCount: 1 }
+]);
 
 // @route   POST api/mangas
 // @desc    Upload manga
 // @access  Private
-router.post('/', authMiddleware, upload.single('pdf'), uploadManga);
+router.post('/', authMiddleware, uploadFields, uploadManga);
 
 // @route   GET api/mangas
 // @desc    Get all mangas
@@ -51,5 +68,27 @@ router.get('/', getMangas);
 // @desc    Get manga by title
 // @access  Public
 router.get('/:title', getMangaByTitle);
+
+router.get('/api/mangas/:title', async (req, res) => {
+  try {
+    const { title } = req.params;
+    const manga = await Manga.findOne({ title }).populate('chapters').exec(); // Populate chapters
+
+    if (!manga) {
+      return res.status(404).send('Manga not found');
+    }
+
+    res.json(manga);
+  } catch (error) {
+    console.error('Error fetching manga:', error);
+    res.status(500).send('Server error');
+  }
+});
+
+// @route   POST api/mangas/add-chapter
+// @desc    Add a new chapter
+// @access  Private
+const uploadSinglePdf = upload.single('pdf');
+router.post('/add-chapter', authMiddleware, uploadSinglePdf, addChapter);
 
 module.exports = router;

@@ -33,7 +33,6 @@ function PDFViewer() {
     };
 
     fetchPdf();
-
     // Cleanup function to revoke the object URL
     return () => {
       if (pdfUrl) {
@@ -45,9 +44,9 @@ function PDFViewer() {
   return (
     <div>
       {pdfUrl && (
-        <div ref={targetRef}>
+        <div ref={targetRef} className='flex flex-col items-center'>
           <button onClick={() => toPDF()}>Download PDF</button>
-          <embed src={pdfUrl} type="application/pdf" width="100%" height="600px" />
+          <embed src={pdfUrl} type="application/pdf" className='w-full md:w-[50%] h-[100vh]' /> 
         </div>
       )}
     </div>
@@ -55,3 +54,4 @@ function PDFViewer() {
 }
 
 export default PDFViewer;
+
