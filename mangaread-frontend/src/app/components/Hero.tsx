@@ -6,7 +6,7 @@ const Hero = () => {
         backgroundImage: "url('https://preview.redd.it/aihj4mgqfzq11.png?width=1080&crop=smart&auto=webp&s=a39bd0251226d936a94ece72ce0519b02364e7ef')",
         backgroundSize: 'contain',
          }}>
-      <div className="absolute inset-0 bg-black bg-opacity-60"></div>
+      <div className="absolute inset-0 bg-black bg-opacity-65"></div>
       <div className="relative container mx-auto px-6 lg:px-12 flex items-center justify-center h-full">
         <div className="text-center text-white">
           <h1 className="text-4xl md:text-6xl font-bold mb-4">Discover Your Next Favorite Manga</h1>

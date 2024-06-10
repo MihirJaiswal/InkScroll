@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Navbar from '../components/Navbar';
 
 interface Chapter {
   _id: string;
@@ -15,10 +16,13 @@ interface Manga {
   title: string;
   description: string;
   pdf?: string;
-  img: string;
+  coverImage: any; // Updated to include img property
   genre: string;
   nsfw: boolean;
   chapters: Chapter[];
+  author: any; // Added author
+  tags: string[]; // Added tags
+  rating: number; // Added rating
 }
 
 const MangaDetail: React.FC = () => {
@@ -57,43 +61,57 @@ const MangaDetail: React.FC = () => {
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 
   return (
-    <div className="container mx-auto px-4 h-screen">
+    <div>
+      <Navbar/>
+      <div className="container mx-auto px-4 h-full mt-4">
       <div className="py-8">
-        <h1 className="text-3xl font-bold text-gray-100 mb-4 text-center">{manga.title}</h1>
-        <div className="flex flex-col justify-center items-center mb-4">
-          <img src="https://m.media-amazon.com/images/I/81X5Wy1uMUL._AC_UF1000,1000_QL80_.jpg" alt={manga.title} className="w-44 h-auto rounded-lg m-4 object-contain" />
-          <div>
-            <p className="text-gray-200 m-2">{manga.description}</p>
-            {manga.nsfw && <p className="text-red-500 font-semibold">NSFW</p>}
+        <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
+        <div className="flex flex-col md:flex-row justify-center items-center my-4">
+          <div className='md:w-full flex justify-center'>
+            <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain" /> {/* Updated image source */}
           </div>
+         <div className='flex flex-col gap-4 md:w-full'>
+         
+         <div className='flex flex-col justify-center items-center gap-4'>
+         {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
+          <p className="text-white md:font-semibold m-2 text-xl text-center ">{manga.description}</p>
+          </div>
+          <div className="md:px-12 flex flex-col md:flex-row justify-center">
+            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Author:</span> {manga.author.username}</p> {/* Added author */}
+            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Genre:</span> {manga.genre}</p> {/* Genre */}
+            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Tags:</span> {manga.tags.join(', ')}</p> {/* Added tags */}
+            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Rating:</span> {manga.rating}/5</p> {/* Added rating */}
+          </div>
+          {manga.pdf && (
+              <div className="mb-4 flex justify-center mt-12">
+                <Link href={`/read/${newurl}`} passHref>
+                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Start Reading</button>
+                </Link>
+              </div>
+            )}
+         </div>
         </div>
-        {manga.pdf && (
-          <div className="mb-4 flex justify-center">
-            <Link href={`/read/${newurl}`} passHref>
-              <button className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Start Reading</button>
-            </Link>
-          </div>
-        )}
         <div className='flex flex-col justify-center items-center'>
-        <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
-        <ul>
-          {manga.chapters.map(chapter => (
-            <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
-              <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
-                <h2 className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
-              </p>
-              <Link href={`/read/${newurl}`}>
-               <div className='flex items-center justify-center m-4'>
-               <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
-               <p className="hover:underline">Read Chapter</p>
-               </button>
-               </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
+          <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
+          <ul>
+            {manga.chapters.map(chapter => (
+              <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
+                <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
+                  <h2 className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
+                </p>
+                <Link href={`/read/${newurl}`}>
+                  <div className='flex items-center justify-center m-4'>
+                    <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+                      <p className="hover:underline">Read Chapter</p>
+                    </button>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
+    </div>
     </div>
   );
 };
