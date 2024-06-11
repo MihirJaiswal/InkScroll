@@ -1,21 +1,11 @@
 'use client'
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import UploadManga from '../upload/page';
 
 const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [authToken, setAuthToken] = useState('');
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track authentication status
   const router = useRouter();
-
-  useEffect(() => {
-    // Check if authToken is truthy and update isAuthenticated state accordingly
-    if (authToken) {
-      setIsAuthenticated(true);
-    }
-  }, [authToken]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -30,10 +20,8 @@ const Login = () => {
 
       const data = await res.json();
       if (res.ok) {
-        localStorage.setItem('authToken', data.token);
-        setAuthToken(data.token); 
-        console.log(data.token);
-        router.push('/');
+        localStorage.setItem('authToken', data.token); // Store the token in local storage
+        router.push('/'); // Redirect to the upload page
       } else {
         alert(data.msg);
       }
@@ -73,8 +61,6 @@ const Login = () => {
         </div>
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Login</button>
       </form>
-      {/* Render UploadManga component if isAuthenticated is true */}
-      {isAuthenticated && <UploadManga authToken={authToken} />} 
     </div>
   );
 };

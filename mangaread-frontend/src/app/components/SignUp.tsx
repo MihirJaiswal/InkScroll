@@ -76,8 +76,6 @@ const Signup = () => {
         <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Sign Up</button>
       </form>
       <div>
-        {/* Render Login component if authToken is empty, otherwise render UploadManga */}
-        {!authToken ? <Login /> : <UploadManga authToken={authToken} />}
       </div>
     </div>
   );

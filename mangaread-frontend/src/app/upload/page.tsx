@@ -1,9 +1,10 @@
 'use client'
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 
-const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
-  console.log(authToken)
+const UploadManga: React.FC = () => {
+  const [authToken, setAuthToken] = useState<string | null>(null);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [genre, setGenre] = useState('');
@@ -12,6 +13,18 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
   const [status, setStatus] = useState('ongoing');
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [pdf, setPdf] = useState<File | null>(null);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if(!token){
+      router.push('/login')
+    }
+    else{
+      setAuthToken(token);
+    }
+  }, []);
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +48,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
       const response = await fetch('http://localhost:5000/api/mangas', {
         method: 'POST',
         headers: {
-          'x-auth-token': `'${authToken}'`,  
+          'x-auth-token': authToken ?? "",  
         },
         body: formData,
       });
@@ -53,11 +66,12 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-900">
+    <div className='md:px-44 p-4 border border-white'>
+      <div className="container mx-auto px-4 py-8 text-gray-900">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">Upload Manga</h1>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex flex-col">
-          <label htmlFor="title" className="text-lg mb-1">Title</label>
+          <label htmlFor="title" className="text-lg mb-1 text-white">Title</label>
           <input
             type="text"
             id="title"
@@ -69,7 +83,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="description" className="text-lg mb-1">Description</label>
+          <label htmlFor="description" className="text-lg mb-1 text-white">Description</label>
           <textarea
             id="description"
             value={description}
@@ -80,7 +94,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="genre" className="text-lg mb-1">Genre</label>
+          <label htmlFor="genre" className="text-lg mb-1 text-white">Genre</label>
           <input
             type="text"
             id="genre"
@@ -92,7 +106,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="chapterNumber" className="text-lg mb-1">Chapter Number</label>
+          <label htmlFor="chapterNumber" className="text-lg mb-1 text-white">Chapter Number</label>
           <input
             type="number"
             id="chapterNumber"
@@ -104,7 +118,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="tags" className="text-lg mb-1">Tags</label>
+          <label htmlFor="tags" className="text-lg mb-1 text-white">Tags</label>
           <input
             type="text"
             id="tags"
@@ -116,7 +130,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
         </div>
 
         <div className="flex flex-col">
-          <label htmlFor="status" className="text-lg mb-1">Status</label>
+          <label htmlFor="status" className="text-lg mb-1 text-white">Status</label>
           <select
             id="status"
             value={status}
@@ -129,8 +143,8 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
           </select>
         </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="coverImage" className="text-lg mb-1">Cover Image</label>
+        <div className="flex flex-col text-white">
+          <label htmlFor="coverImage" className="text-lg mb-1 text-white">Cover Image</label>
           <input
             type="file"
             id="coverImage"
@@ -140,8 +154,8 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
           />
         </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="pdf" className="text-lg mb-1">PDF</label>
+        <div className="flex flex-col text-white">
+          <label htmlFor="pdf" className="text-lg mb-1 text-white">PDF</label>
           <input
             type="file"
             id="pdf"
@@ -160,6 +174,7 @@ const UploadManga: React.FC<{ authToken: any }> = ({ authToken }) => {
           </button>
         </div>
       </form>
+    </div>
     </div>
   );
 };
