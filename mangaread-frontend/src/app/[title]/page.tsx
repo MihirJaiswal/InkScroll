@@ -73,6 +73,9 @@ const MangaDetail: React.FC = () => {
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
+    if(token){
+      console.log(token)
+    }
     setIsSignedIn(!!token);
   }, []);
 
@@ -85,7 +88,7 @@ const MangaDetail: React.FC = () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          'x-auth-token': token ?? "",  
         },
         body: JSON.stringify({ text: commentText }),
       });
@@ -159,14 +162,6 @@ const MangaDetail: React.FC = () => {
         {isSignedIn && (
           <div className="mt-8">
             <h2 className="text-xl font-semibold text-gray-200 my-8">Comments</h2>
-            <ul>
-              {manga.comments.map(comment => (
-                <li key={comment._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
-                  <p className="text-gray-300"><span className='text-white font-bold'>{comment.user.username}:</span> {comment.text}</p>
-                  <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
-                </li>
-              ))}
-            </ul>
             <div className="mt-4">
               <textarea
                 className="w-full p-2 rounded-lg bg-gray-800 text-white"
@@ -181,6 +176,14 @@ const MangaDetail: React.FC = () => {
                 Submit
               </button>
             </div>
+            <ul className='mt-12'>
+              {manga.comments.map(comment => (
+                <li key={comment._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
+                  <p className="text-gray-300"><span className='text-white font-bold'>{comment.user.username}:</span> {comment.text}</p>
+                  <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+                </li>
+              ))}
+            </ul>
           </div>
         )}
       </div>

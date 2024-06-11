@@ -101,3 +101,27 @@ exports.addChapter = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+//function to add comments
+exports.addComment = async (req, res) => {
+  const title = req.params.title;
+  const { text } = req.body;
+
+  try {
+    const manga = await Manga.findOne({ title });
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const newComment = {
+      user: req.user.id,
+      text,
+    };
+
+    manga.comments.push(newComment);
+    await manga.save();
+    res.json(newComment);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+};

@@ -1,9 +1,11 @@
 const express = require('express');
-const { uploadManga, getMangas, getMangaByTitle, addChapter } = require('../controllers/mangaController');
+const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const { check } = require('express-validator');
+const { validationResult } = require('express-validator');
 
 const router = express.Router();
 
@@ -90,5 +92,16 @@ router.get('/api/mangas/:title', async (req, res) => {
 // @access  Private
 const uploadSinglePdf = upload.single('pdf');
 router.post('/add-chapter', authMiddleware, uploadSinglePdf, addChapter);
+
+//comments
+router.post('/:title/comments', [authMiddleware, [
+  check('text', 'Text is required').not().isEmpty()
+]], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  addComment(req, res);
+});
 
 module.exports = router;
