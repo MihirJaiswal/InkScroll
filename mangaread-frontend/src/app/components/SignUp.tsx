@@ -1,8 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Login from '../components/Login'
-import UploadManga from '../upload/page';
+import Link from 'next/link';
 
 const Signup = () => {
   const [username, setUsername] = useState('');
@@ -35,47 +34,50 @@ const Signup = () => {
     }
   };
 
-
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-900">
-      <form onSubmit={handleSubmit} className="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-white mb-4">Sign Up</h2>
-        <div className="mb-4">
-          <label className="block text-gray-400 mb-2" htmlFor="username">Username</label>
-          <input
-            type="text"
-            id="username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
-            required
-          />
+    <div className="py-28 flex items-center justify-center relative p-4">
+      <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
+      <div className="relative z-10 bg-black p-8 rounded-lg shadow-lg max-w-md w-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-100">
+        <h2 className="text-3xl font-bold text-white mb-6 text-center">Sign Up</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-400 mb-2" htmlFor="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              value={username}
+              onChange={(e) => setUsername(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              required
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              required
+            />
+          </div>
+          <div className="mb-6">
+            <label className="block text-gray-400 mb-2" htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              required
+            />
+          </div>
+          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">Sign Up</button>
+        </form>
+        <div className="mt-4 text-center">
+          <p className="text-gray-400">Already have an account? <Link href="/login" className="text-blue-400 hover:underline">Log in</Link></p>
         </div>
-        <div className="mb-4">
-          <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
-            required
-          />
-        </div>
-        <div className="mb-4">
-          <label className="block text-gray-400 mb-2" htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
-            required
-          />
-        </div>
-        <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Sign Up</button>
-      </form>
-      <div>
       </div>
     </div>
   );

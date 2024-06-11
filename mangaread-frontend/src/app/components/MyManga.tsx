@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
 const UserMangaList: React.FC = () => {
   const [mangas, setMangas] = useState<any[]>([]);
@@ -31,7 +32,7 @@ const UserMangaList: React.FC = () => {
         }
 
         const data = await response.json();
-        const userMangas = data.filter((manga : any) => manga.author.username === username);
+        const userMangas = data.filter((manga: any) => manga.author.username === username);
         setMangas(userMangas);
         setLoading(false);
       } catch (err) {
@@ -51,19 +52,28 @@ const UserMangaList: React.FC = () => {
     return <div>Error: {error}</div>;
   }
 
+  if (mangas.length === 0) {
+    return <div>You don't have any uploaded manga.</div>;
+  }
+
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-900">
+    <div className="container mx-auto px-4 py-8 text-gray-100">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">Your Mangas</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {mangas.map((manga) => (
-          <div key={manga.id} className="bg-gray-800 text-white p-4 rounded-lg shadow-md">
-            <h2 className="text-xl font-semibold mb-2">{manga.title}</h2>
-            <p>{manga.description}</p>
-            <p>Genre: {manga.genre}</p>
-            <p>Updated At: {new Date(manga.updatedAt).toLocaleString()}</p>
-            <img src={manga.coverImage} alt={manga.title} className="w-full h-40 object-cover mb-2 rounded" />
-            {/* Render other manga details */}
-          </div>
+          <Link href={`/${manga.title}`} key={manga.title}>
+            <div className="flex items-center justify-between gap-4 p-4 bg-gray-900 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer">
+              <div className='h-44'>
+                <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="w-40 h-44 object-cover mb-2 rounded" />
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold mb-2">{manga.title}</h2>
+                <p>Genre: {manga.genre}</p>
+                <p>Updated At: {new Date(manga.updatedAt).toLocaleString()}</p>
+                <button className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">Edit</button>
+              </div>
+            </div>
+          </Link>
         ))}
       </div>
     </div>

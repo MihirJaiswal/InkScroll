@@ -21,9 +21,9 @@ const Login = () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('authToken', data.token); // Store the token in local storage
-        localStorage.setItem('username', data.username)
-        console.log(data.token)
-        console.log(data.username)
+        localStorage.setItem('username', data.username);
+        console.log(data.token);
+        console.log(data.username);
         router.push('/'); // Redirect to the upload page
       } else {
         alert(data.msg);
@@ -34,17 +34,15 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="w-full relative" style={{ height: "100vh", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
-        <div className="absolute inset-0 bg-cover bg-center" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
-      </div>
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="max-w-md mx-auto">
-          <form onSubmit={handleSubmit} className="p-6 bg-gray-900 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-90 border border-gray-100">
-            <div className="flex flex-col items-center justify-center mb-8">
-              <img src="/logo.png" alt="Logo" className="mr-2 w-8 h-8" /> {/* Adjust the width and height as needed */}
-              <h1 className="text-2xl font-bold text-white">Your Website Name</h1>
-            </div>
+    <div className="flex">
+      <div className="flex-1 flex items-center justify-center p-4">
+      <div className="absolute inset-0 bg-cover bg-center opacity-20 mt-20" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')`}}></div>
+        <div className="relative max-w-md w-full mx-auto p-8 md:p-16 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-100">
+          <div className="flex flex-col items-center justify-center mb-8">
+            <img src="/logo.png" alt="Logo" className="mr-2 w-8 h-8" /> {/* Adjust the width and height as needed */}
+            <h1 className="text-2xl font-bold text-white">Your Website Name</h1>
+          </div>
+          <form onSubmit={handleSubmit}>
             <div className="mb-4">
               <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
               <input
@@ -67,16 +65,18 @@ const Login = () => {
                 required
               />
             </div>
-            <div className='mb-6'>
-              <h3 className='text-s'>Don't have an account? <a href="/signup" className="text-blue-500 text-sm">Sign Up</a></h3>
+            <div className="mb-6">
+              <h3 className="text-s">Don't have an account? <a href="/signup" className="text-blue-500 text-sm">Sign Up</a></h3>
             </div>
             <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Login</button>
           </form>
         </div>
       </div>
+      <div className="w-full hidden md:block relative mx-16" style={{ height: "90vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
+        <div className="absolute inset-0 bg-cover bg-center" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
+      </div>
     </div>
   );
-  
 };
 
 export default Login;

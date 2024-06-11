@@ -1,20 +1,27 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { FaUserCircle } from 'react-icons/fa';
 
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [username, setUsername] = useState('');
+  const pathname = usePathname();
 
   useEffect(() => {
     const token = localStorage.getItem('authToken');
+    const storedUsername = localStorage.getItem('username');
     setIsSignedIn(!!token);
+    setUsername(storedUsername || '');
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('username');
     setIsSignedIn(false);
-    window.location.reload();  // Refresh the page after logout
+    window.location.reload(); // Refresh the page after logout
   };
 
   const toggleMobileMenu = () => {
@@ -22,32 +29,50 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-bgmain text-white p-4 shadow-lg ">
+    <div className="bg-bgmain text-white p-4 shadow-lg">
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-6">
-          <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Home</Link>
-          {isSignedIn && (
-            <>
-              <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">My Manga</Link>
-              <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Upload</Link>
-            </>
+          {pathname !== '/' && (
+            <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
+              Home
+            </Link>
+          )}
+          {isSignedIn && pathname !== '/mymangas' && (
+            <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
+              My Manga
+            </Link>
+          )}
+          {isSignedIn && pathname !== '/upload' && (
+            <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
+              Upload
+            </Link>
           )}
         </div>
-        <div className="hidden md:flex">
+        <div className="hidden md:flex items-center gap-4">
           {isSignedIn ? (
-            <button
-              onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
-              Logout
-            </button>
+            <div className='flex justify-between gap-8'>
+              <div className="flex items-center gap-2">
+                <FaUserCircle className="text-2xl" />
+                <span>{username}</span>
+              </div>
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                Logout
+              </button>
+            </div>
           ) : (
             <>
-              <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                Login
-              </Link>
-              <Link href="/signup" className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
-                Sign Up
-              </Link>
+              {pathname !== '/login' && (
+                <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                  Login
+                </Link>
+              )}
+              {pathname !== '/signup' && (
+                <Link href="/signup" className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300">
+                  Sign Up
+                </Link>
+              )}
             </>
           )}
         </div>
@@ -62,27 +87,40 @@ const Navbar = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden">
           <div className="flex flex-col items-center mt-2">
-            <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Home</Link>
-            {isSignedIn && (
-              <>
-                <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">My Manga</Link>
-                <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Upload</Link>
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
-                  Logout
-                </button>
-              </>
+            {pathname !== '/' && (
+              <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">
+                Home
+              </Link>
             )}
-            {!isSignedIn && (
-              <div className='flex justify-between items-center gap-4'>
-                <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
-                  Login
-                </Link>
-                <Link href="/signup" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
-                  Sign Up
-                </Link>
-              </div>
+            {isSignedIn && pathname !== '/mymangas' && (
+              <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">
+                My Manga
+              </Link>
+            )}
+            {isSignedIn && pathname !== '/upload' && (
+              <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">
+                Upload
+              </Link>
+            )}
+            {isSignedIn ? (
+              <button
+                onClick={handleLogout}
+                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
+                Logout
+              </button>
+            ) : (
+              <>
+                {pathname !== '/login' && (
+                  <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
+                    Login
+                  </Link>
+                )}
+                {pathname !== '/signup' && (
+                  <Link href="/signup" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
+                    Sign Up
+                  </Link>
+                )}
+              </>
             )}
           </div>
         </div>
