@@ -115,7 +115,7 @@ const MangaDetail: React.FC = () => {
       <div className="container mx-auto px-4 h-full mt-4">
       <div className="py-8">
         <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
-        <div className="flex flex-col md:flex-row justify-center items-center my-4">
+        <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
           <div className='md:w-full flex justify-center'>
             <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain" /> {/* Updated image source */}
           </div>
@@ -123,7 +123,7 @@ const MangaDetail: React.FC = () => {
          
          <div className='flex flex-col justify-center items-center gap-4'>
          {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
-          <p className="text-white md:font-semibold m-2 text-xl text-center ">{manga.description}</p>
+          <p className="text-white md:font-medium m-2 text-xl text-center ">{manga.description}</p>
           </div>
           <div className="md:px-12 flex flex-col md:flex-row justify-center">
             <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Author:</span> {manga.author.username}</p> {/* Added author */}

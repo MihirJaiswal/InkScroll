@@ -26,7 +26,6 @@ const Navbar = () => {
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-6">
           <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Home</Link>
-          <Link href="/latest" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Read</Link>
           {isSignedIn && (
             <>
               <Link href="/my-manga" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">My Manga</Link>
@@ -64,7 +63,6 @@ const Navbar = () => {
         <div className="md:hidden">
           <div className="flex flex-col items-center mt-2">
             <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Home</Link>
-            <Link href="/latest" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Read</Link>
             {isSignedIn && (
               <>
                 <Link href="/my-manga" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">My Manga</Link>
@@ -77,14 +75,14 @@ const Navbar = () => {
               </>
             )}
             {!isSignedIn && (
-              <>
+              <div className='flex justify-between items-center gap-4'>
                 <Link href="/login" className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
                   Login
                 </Link>
                 <Link href="/signup" className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2">
                   Sign Up
                 </Link>
-              </>
+              </div>
             )}
           </div>
         </div>

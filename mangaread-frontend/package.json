@@ -17,7 +17,8 @@
     "react-dom": "^18",
     "react-image": "^4.1.0",
     "react-pdf": "^9.0.0",
-    "react-to-pdf": "^1.0.1"
+    "react-to-pdf": "^1.0.1",
+    "react-toastify": "^10.0.5"
   },
   "devDependencies": {
     "@types/node": "^20",
