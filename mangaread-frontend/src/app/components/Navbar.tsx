@@ -28,7 +28,7 @@ const Navbar = () => {
           <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Home</Link>
           {isSignedIn && (
             <>
-              <Link href="/my-manga" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">My Manga</Link>
+              <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">My Manga</Link>
               <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">Upload</Link>
             </>
           )}
@@ -65,7 +65,7 @@ const Navbar = () => {
             <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Home</Link>
             {isSignedIn && (
               <>
-                <Link href="/my-manga" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">My Manga</Link>
+                <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">My Manga</Link>
                 <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2">Upload</Link>
                 <button
                   onClick={handleLogout}

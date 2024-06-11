@@ -21,6 +21,9 @@ const Login = () => {
       const data = await res.json();
       if (res.ok) {
         localStorage.setItem('authToken', data.token); // Store the token in local storage
+        localStorage.setItem('username', data.username)
+        console.log(data.token)
+        console.log(data.username)
         router.push('/'); // Redirect to the upload page
       } else {
         alert(data.msg);

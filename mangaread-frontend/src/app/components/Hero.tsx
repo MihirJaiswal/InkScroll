@@ -30,7 +30,7 @@ const Hero = () => {
               </button>
             ) : (
               <button>
-                <a href="" className="inline-block text-sm bg-red-600 hover:bg-red-700 text-white font-bold py-2 md:py-3 px-6 rounded-lg transition duration-300 ease-in-out">Signin to upload</a>
+                <a href="/login" className="inline-block text-sm bg-red-600 hover:bg-red-700 text-white font-bold py-2 md:py-3 px-6 rounded-lg transition duration-300 ease-in-out">Signin to upload</a>
               </button>
             )}
           </div>

@@ -27,6 +27,7 @@ const MangaList: React.FC = () => {
         if (response.ok) {
           const data: Manga[] = await response.json();
           setMangas(data);
+          console.log(data)
           const genreList = Array.from(new Set(data.map((manga: Manga) => manga.genre)));
           setGenres(genreList);
         } else {
