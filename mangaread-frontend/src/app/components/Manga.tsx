@@ -53,12 +53,12 @@ const MangaList: React.FC = () => {
       <div className="py-12 text-center md:text-left">
         <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
       </div>
-      <div className="flex justify-center md:justify-start mb-6">
+      <div className="flex flex-wrap justify-center md:justify-start mb-6">
         {genres.map((genre) => (
           <button
             key={genre}
             onClick={() => handleGenreClick(genre)}
-            className={`px-4 py-2 mr-2 rounded-lg ${selectedGenre === genre ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
+            className={`px-4 py-2 mb-2 mr-2 rounded-lg ${selectedGenre === genre ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
           >
             {genre}
           </button>

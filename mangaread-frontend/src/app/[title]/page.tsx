@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 
 interface Chapter {
   _id: string;
@@ -11,24 +12,38 @@ interface Chapter {
   pdf: string;
 }
 
+interface Comment {
+  _id: string;
+  user: {
+    username: string;
+  };
+  text: string;
+  createdAt: string;
+}
+
 interface Manga {
   _id: string;
   title: string;
   description: string;
   pdf?: string;
-  coverImage: any; // Updated to include img property
+  coverImage: string; // Updated to include img property
   genre: string;
   nsfw: boolean;
   chapters: Chapter[];
-  author: any; // Added author
+  author: {
+    username: string;
+  }; // Added author
   tags: string[]; // Added tags
   rating: number; // Added rating
+  comments: Comment[];
 }
 
 const MangaDetail: React.FC = () => {
   const pathname = usePathname();
   const title = pathname.split('/').pop(); // Extract title from the pathname
   const [manga, setManga] = useState<Manga | null>(null);
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const [commentText, setCommentText] = useState('');
 
   useEffect(() => {
     const fetchManga = async () => {
@@ -55,6 +70,37 @@ const MangaDetail: React.FC = () => {
       setManga(null);
     };
   }, [title]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    setIsSignedIn(!!token);
+  }, []);
+
+  const handleCommentSubmit = async () => {
+    if (!commentText.trim()) return;
+
+    try {
+      const token = localStorage.getItem('authToken');
+      const response = await fetch(`http://localhost:5000/api/mangas/${title}/comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ text: commentText }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit comment');
+      }
+
+      const newComment = await response.json();
+      setManga(prevManga => prevManga ? { ...prevManga, comments: [...prevManga.comments, newComment] } : null);
+      setCommentText('');
+    } catch (error) {
+      console.error('Error submitting comment:', error);
+    }
+  };
 
   if (!manga) return <div className='h-screen'>Loading....</div>;
 
@@ -110,8 +156,36 @@ const MangaDetail: React.FC = () => {
             ))}
           </ul>
         </div>
+        {isSignedIn && (
+          <div className="mt-8">
+            <h2 className="text-xl font-semibold text-gray-200 my-8">Comments</h2>
+            <ul>
+              {manga.comments.map(comment => (
+                <li key={comment._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
+                  <p className="text-gray-300"><span className='text-white font-bold'>{comment.user.username}:</span> {comment.text}</p>
+                  <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-4">
+              <textarea
+                className="w-full p-2 rounded-lg bg-gray-800 text-white"
+                placeholder="Add a comment..."
+                value={commentText}
+                onChange={(e) => setCommentText(e.target.value)}
+              />
+              <button
+                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+                onClick={handleCommentSubmit}
+              >
+                Submit
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
+    <Footer/>
     </div>
   );
 };
