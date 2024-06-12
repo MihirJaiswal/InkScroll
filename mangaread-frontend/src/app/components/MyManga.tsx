@@ -53,11 +53,11 @@ const UserMangaList: React.FC = () => {
   }
 
   if (mangas.length === 0) {
-    return <div>You don't have any uploaded manga.</div>;
+    return <div className='h-screen'>You don't have any uploaded manga.</div>;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-100">
+    <div className="container mx-auto px-4 py-8 text-gray-100 h-screen">
       <h1 className="text-3xl font-bold mb-4 text-center text-white">Your Mangas</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {mangas.map((manga) => (
