@@ -38,7 +38,7 @@ const Login = () => {
   return (
     <div className="flex">
       <div className="flex-1 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-20 mt-20" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')`}}></div>
+      <div className="absolute inset-0 bg-cover bg-center opacity-20 mt-20" style={{ height:'78vh', background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')`}}></div>
         <div className="relative max-w-md w-full mx-auto p-8 md:p-16 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-100">
           <div className="flex flex-col items-center justify-center mb-8">
             <Image 
@@ -79,7 +79,7 @@ const Login = () => {
           </form>
         </div>
       </div>
-      <div className="w-full hidden md:block relative mx-16 mt-2" style={{ height: "90vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
+      <div className="w-full hidden md:block relative mx-16 mt-2" style={{ height: "78vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
         <div className="absolute inset-0 bg-cover bg-center" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
       </div>
     </div>
