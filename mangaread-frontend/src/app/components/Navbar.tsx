@@ -3,6 +3,8 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { FaUserCircle } from 'react-icons/fa';
+import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png'
+import Image from 'next/image';
 
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -31,19 +33,24 @@ const Navbar = () => {
   return (
     <div className="bg-bgmain text-white p-4 shadow-lg">
       <nav className="flex justify-between items-center container mx-auto">
-        <div className="flex items-center gap-6">
-          {pathname !== '/' && (
-            <Link href="/" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
-              Home
-            </Link>
-          )}
+        <div className="flex items-center gap-12">
+          <Link href="/" className="flex items-center gap-2">
+            <Image 
+            src={logo}
+            alt="Logo"
+            width={50}
+            height={50}
+            className="w-10" /> {/* Update the src to your logo's path */}
+            <span className="text-lg font-semibold text-white hidden md:block ml-2">Manga Sphere</span>
+          </Link>
+          
           {isSignedIn && pathname !== '/mymangas' && (
-            <Link href="/mymangas" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
+            <Link href="/mymangas" className="text-sm hover:text-gray-300 transition duration-300 hidden md:block">
               My Manga
             </Link>
           )}
           {isSignedIn && pathname !== '/upload' && (
-            <Link href="/upload" className="text-sm font-semibold hover:text-gray-300 transition duration-300 hidden md:block">
+            <Link href="/upload" className="text-sm hover:text-gray-300 transition duration-300 hidden md:block">
               Upload
             </Link>
           )}
