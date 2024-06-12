@@ -141,29 +141,38 @@ const MangaDetail: React.FC = () => {
             )}
          </div>
         </div>
-          <div className='flex flex-col justify-center items-center'>
-            {manga.chapters.length > 0 && (
-              <>
-                <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
-                <ul>
-                  {manga.chapters.map(chapter => (
-                    <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
-                      <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
-                        <span className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</span> {chapter.title}
+        <div className="flex flex-col justify-center items-center w-full">
+      {manga.chapters.length > 0 && (
+        <>
+          <h2 className="text-2xl font-bold text-gray-200 my-8">Chapters</h2>
+          <ul>
+            {manga.chapters.map((chapter) => (
+              <li key={chapter._id} className="mb-6 p-4 rounded-2xl bg-gray-900 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
+                <Link href={`/${chapter.title}`}>
+                  <div className="block">
+                    <div className="flex flex-col items-center text-center">
+                      <img 
+                        src={`http://localhost:5000/${manga.coverImage}`} 
+                        alt={`Chapter ${chapter.chapterNumber}`} 
+                        className="w-auto h-48 object-cover rounded-lg mb-4"
+                      />
+                      <p className="text-gray-300 text-lg font-semibold">
+                        <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
                       </p>
-                      <Link href={`/read/${newurl}`}>
-                        <div className='flex items-center justify-center m-4'>
-                          <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
-                            <p className="hover:underline">Read Chapter</p>
-                          </button>
-                        </div>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
+                      <div className="flex items-center justify-center mt-4">
+                        <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">
+                          <p className="hover:underline">Read Chapter</p>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
         <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
         {isSignedIn && (
           <div className="mt-8 p-2 md:p-8 bg-bgmain rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-500">
