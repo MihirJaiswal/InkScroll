@@ -72,7 +72,7 @@ const Login = () => {
           </form>
         </div>
       </div>
-      <div className="w-full hidden md:block relative mx-16" style={{ height: "90vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
+      <div className="w-full hidden md:block relative mx-16 mt-2" style={{ height: "90vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
         <div className="absolute inset-0 bg-cover bg-center" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
       </div>
     </div>

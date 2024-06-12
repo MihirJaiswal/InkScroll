@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { FaUserCircle, FaPaperPlane } from 'react-icons/fa';
 
 interface Chapter {
   _id: string;
@@ -140,47 +141,57 @@ const MangaDetail: React.FC = () => {
             )}
          </div>
         </div>
-        <div className='flex flex-col justify-center items-center'>
-          <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
-          <ul>
-            {manga.chapters.map(chapter => (
-              <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
-                <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
-                  <h2 className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
-                </p>
-                <Link href={`/read/${newurl}`}>
-                  <div className='flex items-center justify-center m-4'>
-                    <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
-                      <p className="hover:underline">Read Chapter</p>
-                    </button>
-                  </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className='flex flex-col justify-center items-center'>
+            {manga.chapters.length > 0 && (
+              <>
+                <h2 className="text-xl font-semibold text-gray-200 my-8">Chapters</h2>
+                <ul>
+                  {manga.chapters.map(chapter => (
+                    <li key={chapter._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
+                      <p className="text-gray-300 text-lg font-semibold flex flex-col items-center">
+                        <span className="font-semibold text-xl m-2">Chapter {chapter.chapterNumber}:</span> {chapter.title}
+                      </p>
+                      <Link href={`/read/${newurl}`}>
+                        <div className='flex items-center justify-center m-4'>
+                          <button className='bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600'>
+                            <p className="hover:underline">Read Chapter</p>
+                          </button>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+        <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
         {isSignedIn && (
-          <div className="mt-8">
+          <div className="mt-8 p-2 md:p-8 bg-bgmain rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-500">
             <h2 className="text-xl font-semibold text-gray-200 my-8">Comments</h2>
-            <div className="mt-4">
+            <div className="mt-4 flex items-center space-x-4 rounded-lg border-b border-gray-600">
               <textarea
-                className="w-full p-2 rounded-lg bg-gray-800 text-white"
+                className="w-full relative p-2 rounded-t-lg bg-gray-950 text-white placeholder-gray-400"
                 placeholder="Add a comment..."
                 value={commentText}
                 onChange={(e) => setCommentText(e.target.value)}
               />
-              <button
-                className="mt-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+              <FaPaperPlane
+                className="text-white absolute right-12 cursor-pointer hover:text-blue-700 transition duration-200"
+                size={24}
                 onClick={handleCommentSubmit}
-              >
-                Submit
-              </button>
+              />
+              
             </div>
-            <ul className='mt-12'>
-              {manga.comments.map(comment => (
-                <li key={comment._id} className="mb-2 bg-gray-950 p-4 rounded-2xl">
-                  <p className="text-gray-300"><span className='text-white font-bold'>{comment.user.username}:</span> {comment.text}</p>
-                  <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+            <ul className="space-y-4 bg-gray-950 p-2 rounded-b-lg">
+              {manga.comments.map((comment) => (
+                <li key={comment._id} className="flex items-start space-x-4 p-4 bg-gray-950 rounded-2xl">
+                  <FaUserCircle className="text-gray-500" size={40} />
+                  <div className="flex-1">
+                    <p className="text-gray-300">
+                      <span className="text-white font-bold">{comment.user.username}</span> {comment.text}
+                    </p>
+                    <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+                  </div>
                 </li>
               ))}
             </ul>
