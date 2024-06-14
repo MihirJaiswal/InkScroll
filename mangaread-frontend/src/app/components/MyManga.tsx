@@ -1,12 +1,14 @@
 'use client'
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const UserMangaList: React.FC = () => {
   const [mangas, setMangas] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [author, setAuthor] = useState('');
+  const router = useRouter()
 
   useEffect(() => {
     const authToken = localStorage.getItem('authToken');
@@ -38,6 +40,7 @@ const UserMangaList: React.FC = () => {
       } catch (err) {
         setError((err as Error).message);
         setLoading(false);
+        router.push('/')
       }
     };
 

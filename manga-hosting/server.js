@@ -4,6 +4,7 @@ const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const mangaRoutes = require('./routes/mangaRoutes');
 const pdfRouter = require('./routes/pdfRouter');
+const userRoutes = require('./routes/userRoutes')
 const dotenv = require('dotenv');
 const path = require('path');
 const cors = require('cors');
@@ -36,6 +37,7 @@ app.use(cors(corsOptions));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/mangas', mangaRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api', pdfRouter);
 
 const PORT = process.env.PORT || 5000;
