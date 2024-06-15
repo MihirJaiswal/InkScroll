@@ -1,3 +1,4 @@
+//routes/userRoutes.js
 const express = require('express');
 const { updateProfile, getProfile, addFavorite, removeFavorite } = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');

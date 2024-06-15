@@ -1,3 +1,4 @@
+//routes/mangaRoutes.js
 const express = require('express');
 const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');

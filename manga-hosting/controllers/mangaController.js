@@ -1,3 +1,4 @@
+//controllers/mangaController.js
 const Manga = require('../models/Manga');
 const fs = require('fs');
 const axios = require('axios'); // Assuming you'll use axios for API requests
@@ -46,7 +47,9 @@ exports.uploadManga = async (req, res) => {
 // Function to get all mangas
 exports.getMangas = async (req, res) => {
   try {
-    const mangas = await Manga.find().populate('author', ['username']);
+    const mangas = await Manga.find()
+      .populate('author', ['username'])
+      .populate('comments.user', 'username profilePicture');
     res.json(mangas);
   } catch (err) {
     console.error(err.message);
@@ -59,7 +62,9 @@ exports.getMangaByTitle = async (req, res) => {
   const title = req.params.title;
 
   try {
-    const manga = await Manga.findOne({ title }).populate('author', ['username']);
+    const manga = await Manga.findOne({ title })
+      .populate('author', ['username'])
+      .populate('comments.user', 'username profilePicture');
     if (!manga) {
       return res.status(404).json({ msg: 'Manga not found' });
     }
@@ -102,7 +107,7 @@ exports.addChapter = async (req, res) => {
   }
 };
 
-//function to add comments
+// Function to add comments
 exports.addComment = async (req, res) => {
   const title = req.params.title;
   const { text } = req.body;
@@ -120,8 +125,15 @@ exports.addComment = async (req, res) => {
 
     manga.comments.push(newComment);
     await manga.save();
-    res.json(newComment);
+
+    // Populate the newly added comment's user field
+    const populatedManga = await Manga.findOne({ title }).populate('comments.user', 'username profilePicture');
+    const addedComment = populatedManga.comments.find(comment => comment._id.equals(newComment._id));
+
+    res.json(addedComment);
+
   } catch (err) {
+    console.error('Error adding comment:', err);
     res.status(500).send('Server error');
   }
 };

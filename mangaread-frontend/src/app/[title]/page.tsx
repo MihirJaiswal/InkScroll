@@ -18,7 +18,7 @@ interface Comment {
   _id: string;
   user: {
     username: string;
-    profileImage: string;
+    profilePicture: string;
   };
   text: string;
   createdAt: string;
@@ -43,7 +43,7 @@ interface Manga {
 
 interface User {
   username: string;
-  profileImage: string;
+  profilePicture: string;
 }
 
 const MangaDetail: React.FC = () => {
@@ -85,7 +85,7 @@ const MangaDetail: React.FC = () => {
       setIsSignedIn(true);
       const fetchUser = async () => {
         try {
-          const response = await fetch('http://localhost:5000/api/user', {
+          const response = await fetch('http://localhost:5000/api/users', {
             headers: {
               'x-auth-token': token,
             },
@@ -95,7 +95,7 @@ const MangaDetail: React.FC = () => {
           }
           const userData = await response.json();
           setUser(userData);
-
+          console.log('user us', userData);
           // Check if manga is already in favorites
           const favResponse = await fetch('http://localhost:5000/api/user/favorites', {
             headers: {
@@ -124,7 +124,7 @@ const MangaDetail: React.FC = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token ?? '',  
+          'x-auth-token': token ?? '',
         },
         body: JSON.stringify({ mangaId: manga?._id }),
       });
@@ -144,13 +144,25 @@ const MangaDetail: React.FC = () => {
     setManga((prevManga) => prevManga ? { ...prevManga, comments: [...prevManga.comments, newComment] } : null);
   };
 
+  const handleCommentDeleted = (commentId: string) => {
+    setManga((prevManga) =>
+      prevManga ? { ...prevManga, comments: prevManga.comments.filter(comment => comment._id !== commentId) } : null
+    );
+  };
+
   if (!manga) return <div className='h-screen'>Loading....</div>;
 
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 
+  console.log('comments', manga.comments);
+  console.log(user);
+  console.log(isSignedIn);
+  console.log(manga.title);
+  console.log('username is', user?.username);
+
   return (
     <div>
-      <Navbar/>
+      <Navbar />
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
           <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
@@ -174,76 +186,77 @@ const MangaDetail: React.FC = () => {
                 )}
               </div>
               <div className="md:px-12 flex flex-wrap md:flex-row justify-center gap-4">
-              <p className="text-gray-200 m-2 text-center flex items-center"><FaUserCircle className="mr-2"/> {manga.author.username}</p>
-              <p className="text-gray-200 m-2 text-center flex items-center"><FaTags className="mr-2"/> {manga.tags.join(', ')}</p>
-              <p className="text-gray-200 m-2 text-center flex items-center"><FaStar className="mr-2"/> {manga.rating}/5</p>
+                <p className="text-gray-200 m-2 text-center flex items-center"><FaUserCircle className="mr-2" /> {manga.author.username}</p>
+                <p className="text-gray-200 m-2 text-center flex items-center"><FaTags className="mr-2" /> {manga.tags.join(', ')}</p>
+                <p className="text-gray-200 m-2 text-center flex items-center"><FaStar className="mr-2" /> {manga.rating}/5</p>
               </div>
-          <div className='flex flex-row items-center justify-center gap-4 mb-4'>
-          {manga.pdf && (
-              <div className="mt-4 flex justify-center">
-                <Link href={`/read/${newurl}`} passHref>
-                  <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Start Reading</button>
-                </Link>
-              </div>
-            )}
-          {isSignedIn && (
-            <div className="mt-4 flex justify-center">
-              <button
-                className={`px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
-                onClick={handleFavoriteToggle}
-              >
-                {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
-              </button>
-            </div>
-          )}
-          </div>
-         </div>
-        </div>
-        <div className="flex flex-col justify-center items-center w-full">
-      {manga.chapters.length > 0 && (
-        <>
-          <h2 className="text-2xl font-bold text-gray-200 my-8">Chapters</h2>
-          <ul>
-            {manga.chapters.map((chapter) => (
-              <li key={chapter._id} className="mb-6 p-4 rounded-2xl bg-gray-900 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
-                <Link href={`/${chapter.title}`}>
-                  <div className="block">
-                    <div className="flex flex-col items-center text-center">
-                      <img 
-                        src={`http://localhost:5000/${manga.coverImage}`} 
-                        alt={`Chapter ${chapter.chapterNumber}`} 
-                        className="w-auto h-48 object-cover rounded-lg mb-4"
-                      />
-                      <p className="text-gray-300 text-lg font-semibold">
-                        <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
-                      </p>
-                      <div className="flex items-center justify-center mt-4">
-                        <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">
-                          <p className="hover:underline">Read Chapter</p>
-                        </button>
-                      </div>
-                    </div>
+              <div className='flex flex-row items-center justify-center gap-4 mb-4'>
+                {manga.pdf && (
+                  <div className="mt-4 flex justify-center">
+                    <Link href={`/read/${newurl}`} passHref>
+                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Start Reading</button>
+                    </Link>
                   </div>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-    </div>
-        <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
-        {isSignedIn && (
-          <CommentSection 
-            mangaTitle={title} 
-            comments={manga.comments} 
-            isSignedIn={isSignedIn} 
-            user={user} 
-            onCommentAdded={handleCommentAdded} 
-          />
-        )}
+                )}
+                {isSignedIn && (
+                  <div className="mt-4 flex justify-center">
+                    <button
+                      className={`px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
+                      onClick={handleFavoriteToggle}
+                    >
+                      {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+          <div className="flex flex-col justify-center items-center w-full">
+            {manga.chapters.length > 0 && (
+              <>
+                <h2 className="text-2xl font-bold text-gray-200 my-8">Chapters</h2>
+                <ul>
+                  {manga.chapters.map((chapter) => (
+                    <li key={chapter._id} className="mb-6 p-4 rounded-2xl bg-gray-900 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
+                      <Link href={`/${chapter.title}`}>
+                        <div className="block">
+                          <div className="flex flex-col items-center text-center">
+                            <img
+                              src={`http://localhost:5000/${manga.coverImage}`}
+                              alt={`Chapter ${chapter.chapterNumber}`}
+                              className="w-auto h-48 object-cover rounded-lg mb-4"
+                            />
+                            <p className="text-gray-300 text-lg font-semibold">
+                              <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
+                            </p>
+                            <div className="flex items-center justify-center mt-4">
+                              <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">
+                                <p className="hover:underline">Read Chapter</p>
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </>
+            )}
+          </div>
+          <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+          {isSignedIn && (
+            <CommentSection
+              mangaTitle={title}
+              comments={manga.comments}
+              isSignedIn={isSignedIn}
+              user={user}
+              onCommentAdded={handleCommentAdded}
+              onCommentDeleted={handleCommentDeleted}
+            />
+          )}
+        </div>
       </div>
-    </div>
-    <Footer/>
+      <Footer />
     </div>
   );
 };
