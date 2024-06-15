@@ -3,11 +3,15 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import UserMangaList from './MyManga';
 
 interface UserProfile {
   username: string;
   email: string;
   profilePicture?: string;
+  followersCount: number;
+  followingCount: number;
+  mangasUploaded: number;
 }  
 
 const ProfilePage: React.FC = () => {
@@ -21,7 +25,6 @@ const ProfilePage: React.FC = () => {
     const fetchUserProfile = async () => {
       try {
         const token = localStorage.getItem('authToken');
-        console.log(token);
         const response = await fetch('http://localhost:5000/api/users/profile', {
           headers: {
             'x-auth-token': token ?? "",
@@ -34,8 +37,6 @@ const ProfilePage: React.FC = () => {
 
         const data = await response.json();
         setUser(data);
-        console.log('Profile Image Path:', data.profilePicture); // Log profileImage
-        console.log(data)
         setUsername(data.username);
         setEmail(data.email);
       } catch (error) {
@@ -76,7 +77,6 @@ const ProfilePage: React.FC = () => {
 
       const updatedUser = await response.json();
       setUser(updatedUser);
-      console.log('Updated Profile:', updatedUser);
       alert('Profile updated successfully');
     } catch (error) {
       console.error('Error updating profile:', error);
@@ -85,9 +85,7 @@ const ProfilePage: React.FC = () => {
 
   if (!user) return <div className='h-screen'>Loading...</div>;
 
-  // Ensure the profile picture path is formatted correctly
   const profileImageUrl = user.profilePicture ? `http://localhost:5000/${user.profilePicture.replace(/\\/g, '/')}` : '/default-profile.png';
-  console.log('Profile Image URL:', profileImageUrl); // Log the profile image URL
 
   return (
     <div>
@@ -95,13 +93,33 @@ const ProfilePage: React.FC = () => {
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
           <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">User Profile</h1>
-          <div className="flex flex-col items-center">
-            <img 
-              src={profileImageUrl} 
-              alt={user.username} 
-              className="w-32 h-32 rounded-full mb-4 object-cover" 
-            />
-            <div className="w-full md:w-1/2 bg-gray-800 p-8 rounded-lg shadow-md">
+          <div className="flex flex-col md:flex-row justify-between items-center md:mt-16 mb-12">
+            <div className='w-full flex flex-col items-center my-8'>
+              <img 
+                src={profileImageUrl} 
+                alt={user.username} 
+                className="w-32 md:w-56 md:h-56 h-32 rounded-full mb-4 object-cover" 
+              />
+              <div className="text-center">
+                <p className="text-white text-lg">{user.username}</p>
+                <p className="text-gray-400">{user.email}</p>
+              </div>
+              <div className="mt-4 flex space-x-8">
+                <div className="text-center">
+                  <p className="text-white text-lg font-semibold">{user.followersCount}</p>
+                  <p className="text-gray-400">Followers</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-white text-lg font-semibold">{user.followingCount}</p>
+                  <p className="text-gray-400">Following</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-white text-lg font-semibold">{user.mangasUploaded}</p>
+                  <p className="text-gray-400">Mangas Uploaded</p>
+                </div>
+              </div>
+            </div>
+            <div className="w-full bg-gray-900 p-8 rounded-2xl shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
               <div className="mb-4">
                 <label className="block text-white mb-2">Username</label>
                 <input 
@@ -137,6 +155,9 @@ const ProfilePage: React.FC = () => {
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <UserMangaList/>
       </div>
       <Footer />
     </div>

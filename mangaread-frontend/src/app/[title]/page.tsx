@@ -4,8 +4,8 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { FaPaperPlane } from 'react-icons/fa';
-import { FaUserCircle } from 'react-icons/fa';
+import CommentSection from '../components/CommentSection';
+import { FaUserCircle, FaTags, FaStar } from 'react-icons/fa';
 
 interface Chapter {
   _id: string;
@@ -18,7 +18,7 @@ interface Comment {
   _id: string;
   user: {
     username: string;
-    profileImage: string; // Added profileImage property
+    profileImage: string;
   };
   text: string;
   createdAt: string;
@@ -48,11 +48,12 @@ interface User {
 
 const MangaDetail: React.FC = () => {
   const pathname = usePathname();
-  const title = pathname.split('/').pop(); 
+  const title = pathname.split('/').pop() || ''; // Ensure title is always a string
   const [manga, setManga] = useState<Manga | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
-  const [commentText, setCommentText] = useState('');
   const [user, setUser] = useState<User | null>(null);
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     const fetchManga = async () => {
@@ -94,60 +95,53 @@ const MangaDetail: React.FC = () => {
           }
           const userData = await response.json();
           setUser(userData);
+
+          // Check if manga is already in favorites
+          const favResponse = await fetch('http://localhost:5000/api/user/favorites', {
+            headers: {
+              'x-auth-token': token,
+            },
+          });
+          const favoriteMangas = await favResponse.json();
+          if (favoriteMangas.some((favManga: Manga) => favManga._id === manga?._id)) {
+            setIsFavorite(true);
+          }
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
       };
       fetchUser();
     }
-  }, []);
+  }, [manga?._id]);
 
-  const handleCommentSubmit = async () => {
-    if (!commentText.trim()) return;
-
+  const handleFavoriteToggle = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/api/mangas/${title}/comments`, {
-        method: 'POST',
+      const url = `http://localhost:5000/api/users/favorites`;
+      const method = isFavorite ? 'DELETE' : 'POST';
+
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token ?? "",  
-        },
-        body: JSON.stringify({ text: commentText }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to submit comment');
-      }
-
-      const newComment = await response.json();
-      setManga(prevManga => prevManga ? { ...prevManga, comments: [...prevManga.comments, newComment] } : null);
-      setCommentText('');
-    } catch (error) {
-      console.error('Error submitting comment:', error);
-    }
-  };
-
-  const handleAddToFavorites = async () => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/api/user/favorites`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token ?? "",  
+          'x-auth-token': token ?? '',  
         },
         body: JSON.stringify({ mangaId: manga?._id }),
       });
 
       if (!response.ok) {
-        throw new Error('Failed to add to favorites');
+        throw new Error('Failed to update favorites');
       }
 
-      console.log('Manga added to favorites');
+      setIsFavorite(!isFavorite);
+      console.log(`Manga ${isFavorite ? 'removed from' : 'added to'} favorites`);
     } catch (error) {
-      console.error('Error adding to favorites:', error);
+      console.error('Error updating favorites:', error);
     }
+  };
+
+  const handleCommentAdded = (newComment: Comment) => {
+    setManga((prevManga) => prevManga ? { ...prevManga, comments: [...prevManga.comments, newComment] } : null);
   };
 
   if (!manga) return <div className='h-screen'>Loading....</div>;
@@ -158,26 +152,35 @@ const MangaDetail: React.FC = () => {
     <div>
       <Navbar/>
       <div className="container mx-auto px-4 h-full mt-4">
-      <div className="py-8">
-        <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
-        <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
-          <div className='md:w-full flex justify-center'>
-            <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain" />
-          </div>
-         <div className='flex flex-col gap-4 md:w-full'>
-         
-         <div className='flex flex-col justify-center items-center gap-4'>
-         {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
-          <p className="text-white md:font-medium m-2 text-xl text-center ">{manga.description}</p>
-          </div>
-          <div className="md:px-12 flex flex-col md:flex-row justify-center">
-            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Author:</span> {manga.author.username}</p>
-            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Genre:</span> {manga.genre}</p>
-            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Tags:</span> {manga.tags.join(', ')}</p>
-            <p className="text-gray-200 m-2 text-center"><span className='text-white font-bold'>Rating:</span> {manga.rating}/5</p>
-          </div>
+        <div className="py-8">
+          <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
+          <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
+            <div className='md:w-full flex justify-center'>
+              <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain" />
+            </div>
+            <div className='flex flex-col gap-4 md:w-full'>
+              <div className='flex flex-col justify-center items-center gap-4'>
+                {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
+                <p className={`text-white md:font-medium m-2 text-xl text-center ${showFullDescription ? '' : 'line-clamp-2'}`}>
+                  {manga.description}
+                </p>
+                {!showFullDescription && (
+                  <button
+                    className="text-blue-500 font-bold hover:underline focus:outline-none"
+                    onClick={() => setShowFullDescription(true)}
+                  >
+                    Load More
+                  </button>
+                )}
+              </div>
+              <div className="md:px-12 flex flex-wrap md:flex-row justify-center gap-4">
+              <p className="text-gray-200 m-2 text-center flex items-center"><FaUserCircle className="mr-2"/> {manga.author.username}</p>
+              <p className="text-gray-200 m-2 text-center flex items-center"><FaTags className="mr-2"/> {manga.tags.join(', ')}</p>
+              <p className="text-gray-200 m-2 text-center flex items-center"><FaStar className="mr-2"/> {manga.rating}/5</p>
+              </div>
+          <div className='flex flex-row items-center justify-center gap-4 mb-4'>
           {manga.pdf && (
-              <div className="mb-4 flex justify-center mt-12">
+              <div className="mt-4 flex justify-center">
                 <Link href={`/read/${newurl}`} passHref>
                   <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Start Reading</button>
                 </Link>
@@ -186,13 +189,14 @@ const MangaDetail: React.FC = () => {
           {isSignedIn && (
             <div className="mt-4 flex justify-center">
               <button
-                className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600"
-                onClick={handleAddToFavorites}
+                className={`px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
+                onClick={handleFavoriteToggle}
               >
-                Add to Favorites
+                {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
               </button>
             </div>
           )}
+          </div>
          </div>
         </div>
         <div className="flex flex-col justify-center items-center w-full">
@@ -229,46 +233,13 @@ const MangaDetail: React.FC = () => {
     </div>
         <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
         {isSignedIn && (
-          <div className="mt-8 p-2 md:p-8 bg-bgmain rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-500">
-            <h2 className="text-xl font-semibold text-gray-200 my-8">Comments</h2>
-            <div className="mt-4 flex items-center space-x-4 rounded-lg border-b border-gray-600">
-              <textarea
-                className="w-full relative p-2 rounded-t-lg bg-gray-950 text-white placeholder-gray-400"
-                placeholder="Add a comment..."
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-              />
-              <FaPaperPlane
-                className="text-white absolute right-12 cursor-pointer hover:text-blue-700 transition duration-200"
-                size={24}
-                onClick={handleCommentSubmit}
-              />
-              
-            </div>
-            <ul className="space-y-4 bg-gray-950 p-2 rounded-b-lg">
-              {manga.comments.map((comment) => (
-                <li key={comment._id} className="flex items-start space-x-4 p-4 bg-gray-950 rounded-2xl">
-                  {comment.user.profileImage ? (
-                    <img
-                      src={`http://localhost:5000/${comment.user.profileImage}`}
-                      alt={comment.user.username}
-                      className="w-10 h-10 rounded-full"
-                    />
-                  ) : (
-                    <FaUserCircle className="text-gray-500 w-10 h-10" />
-                  )}
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-gray-300">
-                        <span className="text-white font-bold">{comment.user.username}</span> {comment.text}
-                      </p>
-                      <p className="text-gray-500 text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
-                    </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
-          </div>
+          <CommentSection 
+            mangaTitle={title} 
+            comments={manga.comments} 
+            isSignedIn={isSignedIn} 
+            user={user} 
+            onCommentAdded={handleCommentAdded} 
+          />
         )}
       </div>
     </div>

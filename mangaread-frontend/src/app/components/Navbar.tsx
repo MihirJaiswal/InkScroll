@@ -72,10 +72,10 @@ const Navbar = () => {
           {isSignedIn && (
             <>
               <Link
-                href="/mymangas"
+                href="/favourite"
                 className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
               >
-                My Manga
+                Favorites
               </Link>
               <Link
                 href="/upload"
