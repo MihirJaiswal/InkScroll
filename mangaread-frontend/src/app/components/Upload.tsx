@@ -66,7 +66,7 @@ const UploadManga: React.FC = () => {
     <div className="container mx-auto md:px-4 md:py-8 text-gray-200">
       <div className="flex flex-wrap justify-center items-start">
         <div className="w-full md:w-2/3 lg:w-1/2 p-4">
-          <div className="bg-black p-2 md:p-8 rounded-lg shadow-lg border border-gray-700">
+          <div className="bg-gray-900 p-2 md:p-8 rounded-lg shadow-lg border border-gray-700">
             <h1 className="md:text-3xl text-xl font-bold mb-4 text-center text-gray-200">Upload Manga</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex flex-col">
@@ -76,17 +76,17 @@ const UploadManga: React.FC = () => {
                   id="title"
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                   required
                 />
-              </div>
+              </div>  
               <div className="flex flex-col">
                 <label htmlFor="description" className="text-lg mb-1 text-gray-200">Description</label>
                 <textarea
                   id="description"
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-500 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                   required
                 />
               </div>
@@ -96,7 +96,7 @@ const UploadManga: React.FC = () => {
                   id="genre"
                   value={genre}
                   onChange={(e) => setGenre(e.target.value)}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-700 focus:border-white focus:ring focus:ring-gray-500 focus:ring-opacity-50"
                   required
                 >
                   <option value="Action">Action</option>
@@ -119,7 +119,7 @@ const UploadManga: React.FC = () => {
                   id="chapterNumber"
                   value={chapterNumber}
                   onChange={(e) => setChapterNumber(Number(e.target.value))}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-500 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                   required
                 />
               </div>
@@ -130,7 +130,7 @@ const UploadManga: React.FC = () => {
                   id="tags"
                   value={tags}
                   onChange={(e) => setTags(e.target.value)}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-500 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                   required
                 />
               </div>
@@ -140,7 +140,7 @@ const UploadManga: React.FC = () => {
                   id="status"
                   value={status}
                   onChange={(e) => setStatus(e.target.value)}
-                  className="py-2 px-4 rounded-md bg-gray-900 border-gray-700 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                  className="py-2 px-4 rounded-md bg-gray-700 border-gray-500 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
                   required
                 >
                   <option value="ongoing">Ongoing</option>
@@ -182,7 +182,7 @@ const UploadManga: React.FC = () => {
             </form>
           </div>
         </div>
-        <div className="w-full hidden md:w-1/3 lg:w-1/2 p-4 md:flex flex-col justify-center items-center" >
+        <div className="w-full hidden md:w-1/3 lg:w-1/2 p-4 md:flex flex-col justify-center items-center gap-4" >
           <img src="https://i.ibb.co/cCWJYC4/bg.jpg" alt="Upload Illustration" className="rounded-lg shadow-lg" style={{ height: "300px", clipPath: "polygon(0% 0%, 100% 0%, 100% 75%, 45% 76%, 42% 100%, 31% 75%, 0% 75%);" }}/>
           <Image 
           src={logo}

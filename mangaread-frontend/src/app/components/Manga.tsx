@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import { FaSearch } from 'react-icons/fa'; // Import FaSearch for magnifying glass icon
+import { FaSearch } from 'react-icons/fa';
 
 interface Manga {
   _id: string;
@@ -53,7 +53,9 @@ const MangaList: React.FC = () => {
   };
 
   const filteredMangas = mangas.filter((manga) => {
-    return manga.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesTitle = manga.title.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesGenre = selectedGenre ? manga.genre === selectedGenre : true;
+    return matchesTitle && matchesGenre;
   });
 
   const handleClearSearch = () => {
@@ -65,7 +67,7 @@ const MangaList: React.FC = () => {
       <div className="py-12 text-center md:text-left">
         <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
       </div>
-      <div className="flex flex-wrap justify-center md:justify-start mb-6">
+      <div className="flex flex-wrap w-full justify-center md:justify-start mb-6">
         <div className="relative">
           <input
             type="text"
@@ -101,9 +103,18 @@ const MangaList: React.FC = () => {
           </div>
         </div>
       </div>
-      <div
-        className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12"
-      >
+      <div className="flex flex-wrap mb-6 justify-center md:justify-start">
+        {genres.map((genre) => (
+          <button
+            key={genre}
+            onClick={() => handleGenreClick(genre)}
+            className={`px-4 py-2 m-2 rounded-lg text-white ${selectedGenre === genre ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 focus:outline-none`}
+          >
+            {genre}
+          </button>
+        ))}
+      </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
         {loading ? (
           <div className="col-span-full text-center text-lg text-gray-700">
             Loading...
