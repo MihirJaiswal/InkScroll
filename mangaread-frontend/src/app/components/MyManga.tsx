@@ -94,7 +94,7 @@ const UserMangaList: React.FC = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8 text-gray-100 h-screen mb-12">
+    <div className="container mx-auto px-4 py-8 text-gray-100 h-full">
       <h1 className="text-3xl font-bold text-center text-white mb-12">Your Mangas</h1>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {mangas.map((manga) => (

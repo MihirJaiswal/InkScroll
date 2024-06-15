@@ -1,6 +1,7 @@
 'use client';
 import React, { useState } from 'react';
 import { FaPaperPlane, FaUserCircle, FaTrashAlt } from 'react-icons/fa';
+import Modal from './Modal'; // Import your Modal component
 
 interface Comment {
   _id: string;
@@ -12,22 +13,18 @@ interface Comment {
   createdAt: string;
 }
 
-interface User {
-  username: string;
-  profilePicture: string;
-}
-
 interface CommentSectionProps {
   mangaTitle: string;
   comments: Comment[];
   isSignedIn: boolean;
-  user: User | null;
   onCommentAdded: (comment: Comment) => void;
   onCommentDeleted: (commentId: string) => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, isSignedIn, user, onCommentAdded, onCommentDeleted }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, isSignedIn, onCommentAdded, onCommentDeleted }) => {
   const [commentText, setCommentText] = useState('');
+  const [showModal, setShowModal] = useState(false);
+  const [commentIdToDelete, setCommentIdToDelete] = useState('');
 
   const handleCommentSubmit = async () => {
     if (!commentText.trim()) return;
@@ -47,13 +44,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
         throw new Error('Failed to submit comment');
       }
 
-      const responseText = await response.text();
-      console.log('Response Text:', responseText); // Debugging line
-      const newComment = JSON.parse(responseText);
+      const newComment = await response.json(); // Assuming response returns the new comment
       onCommentAdded(newComment);
       setCommentText('');
-      // Refresh the page after submitting a comment
-      window.location.reload();
     } catch (error) {
       console.error('Error submitting comment:', error);
     }
@@ -61,8 +54,20 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
 
   const handleCommentDelete = async (commentId: string) => {
     try {
+      // Show the modal for confirmation
+      setShowModal(true);
+      setCommentIdToDelete(commentId);
+    } catch (error) {
+      console.error('Error deleting comment:', error);
+    }
+  };
+
+  const handleConfirmDelete = async () => {
+    try {
+      setShowModal(false);
+
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentId}`, {
+      const response = await fetch(`http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentIdToDelete}`, {
         method: 'DELETE',
         headers: {
           'x-auth-token': token ?? '',
@@ -73,18 +78,21 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
         throw new Error('Failed to delete comment');
       }
 
-      onCommentDeleted(commentId);
-      // Refresh the page after deleting a comment
-      window.location.reload();
+      onCommentDeleted(commentIdToDelete);
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
   };
 
-  console.log('user is', user);
+  const handleCancelDelete = () => {
+    setShowModal(false);
+    setCommentIdToDelete('');
+  };
+
+  const username = localStorage.getItem('username'); // Get username from localStorage
 
   return (
-    <div className="mt-8 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 ">
+    <div className="mt-8 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70">
       <h2 className="text-xl font-semibold text-gray-200 my-8">Comments</h2>
       {isSignedIn && (
         <div className="mt-4 flex items-center space-x-4 rounded-lg border-b border-gray-600">
@@ -118,19 +126,30 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
                 <p className="text-gray-300">
                   <h2 className="text-white font-bold">{comment.user.username}</h2> {comment.text}
                 </p>
-                <p className="text-gray-500 text-xs md:text-sm">{new Date(comment.createdAt).toLocaleString()}</p>
+                <div className='md:flex flex-col justify-center items-center gap-2'>
+                  <p className="text-gray-500 text-xs md:text-sm py-1">{new Date(comment.createdAt).toLocaleString()}</p>
+                  {isSignedIn && username === comment.user.username && (
+                    <FaTrashAlt
+                      className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
+                      size={16}
+                      onClick={() => handleCommentDelete(comment._id)}
+                    />
+                  )}
+                </div>
               </div>
-              {isSignedIn && user && user.username === comment.user.username && (
-                <FaTrashAlt
-                  className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
-                  size={16}
-                  onClick={() => handleCommentDelete(comment._id)}
-                />
-              )}
             </div>
           </li>
         ))}
       </ul>
+
+      {/* Modal for confirmation */}
+      <Modal
+        isOpen={showModal}
+        title="Confirm Deletion"
+        message="Are you sure you want to delete this comment?"
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+      />
     </div>
   );
 };

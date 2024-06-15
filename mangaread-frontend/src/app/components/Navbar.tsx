@@ -13,6 +13,8 @@ const Navbar = () => {
   useEffect(() => {
     // Check if user is signed in
     const authToken = localStorage.getItem('authToken');
+    const username = localStorage.getItem('username')
+    console.log(username)
     setIsSignedIn(!!authToken);
 
     // Fetch user data if signed in
@@ -43,6 +45,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
+    localStorage.removeItem('username')
     setIsSignedIn(false);
     // Optional: Redirect or reload to another page after logout
     window.location.reload();
@@ -83,6 +86,12 @@ const Navbar = () => {
               >
                 Upload
               </Link>
+              <Link
+                href="/all-mangas"
+                className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
+              >
+                Read
+              </Link>
             </>
           )}
         </div>
@@ -120,13 +129,13 @@ const Navbar = () => {
             <>
               <Link
                 href="/login"
-                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block"
               >
                 Sign Up
               </Link>
@@ -181,6 +190,12 @@ const Navbar = () => {
                   className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
                 >
                   Upload
+                </Link>
+                <Link
+                  href="/all-mangas"
+                  className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
+                >
+                  Read
                 </Link>
                 <button
                   onClick={handleLogout}

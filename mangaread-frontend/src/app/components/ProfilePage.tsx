@@ -89,7 +89,6 @@ const ProfilePage: React.FC = () => {
 
   return (
     <div>
-      <Navbar />
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
           <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">User Profile</h1>
@@ -157,9 +156,7 @@ const ProfilePage: React.FC = () => {
         </div>
       </div>
       <div>
-        <UserMangaList/>
       </div>
-      <Footer />
     </div>
   );
 };

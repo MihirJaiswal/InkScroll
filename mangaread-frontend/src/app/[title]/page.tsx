@@ -249,7 +249,6 @@ const MangaDetail: React.FC = () => {
               mangaTitle={title}
               comments={manga.comments}
               isSignedIn={isSignedIn}
-              user={user}
               onCommentAdded={handleCommentAdded}
               onCommentDeleted={handleCommentDeleted}
             />

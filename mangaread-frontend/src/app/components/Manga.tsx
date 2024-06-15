@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import { FaSearch } from 'react-icons/fa'; // Import FaSearch for magnifying glass icon
 
 interface Manga {
   _id: string;
@@ -19,6 +20,7 @@ const MangaList: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [genres, setGenres] = useState<string[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>('');
 
   useEffect(() => {
     const fetchMangas = async () => {
@@ -27,7 +29,6 @@ const MangaList: React.FC = () => {
         if (response.ok) {
           const data: Manga[] = await response.json();
           setMangas(data);
-          console.log(data)
           const genreList = Array.from(new Set(data.map((manga: Manga) => manga.genre)));
           setGenres(genreList);
         } else {
@@ -47,7 +48,17 @@ const MangaList: React.FC = () => {
     setSelectedGenre(genre === selectedGenre ? null : genre);
   };
 
-  const filteredMangas = selectedGenre ? mangas.filter(manga => manga.genre === selectedGenre) : mangas;
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(event.target.value);
+  };
+
+  const filteredMangas = mangas.filter((manga) => {
+    return manga.title.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+
+  const handleClearSearch = () => {
+    setSearchTerm('');
+  };
 
   return (
     <div className="container mx-auto px-4 md:px-4">
@@ -55,21 +66,43 @@ const MangaList: React.FC = () => {
         <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
       </div>
       <div className="flex flex-wrap justify-center md:justify-start mb-6">
-        {genres.map((genre) => (
-          <button
-            key={genre}
-            onClick={() => handleGenreClick(genre)}
-            className={`px-4 py-2 mb-2 mr-2 rounded-lg ${selectedGenre === genre ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-800'}`}
-          >
-            {genre}
-          </button>
-        ))}
+        <div className="relative">
+          <input
+            type="text"
+            placeholder="Search by title..."
+            value={searchTerm}
+            onChange={handleSearchChange}
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600"
+          />
+          <div className="absolute inset-y-0 right-3 flex items-center">
+            {searchTerm && (
+              <button
+                className="text-gray-400 hover:text-gray-600 focus:outline-none"
+                onClick={handleClearSearch}
+                aria-label="Clear search"
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            )}
+            <FaSearch className="text-gray-400" />
+          </div>
+        </div>
       </div>
-      <motion.div
+      <div
         className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 1 }}
       >
         {loading ? (
           <div className="col-span-full text-center text-lg text-gray-700">
@@ -77,7 +110,7 @@ const MangaList: React.FC = () => {
           </div>
         ) : (
           filteredMangas.map(({ _id, title, description, pdf, coverImage, author }) => (
-            <Link href={`/${title}`} key={title}>
+            <Link href={`/${title}`} key={_id}>
               <motion.div
                 className="flex flex-col items-center rounded-lg p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: 50 }}
@@ -99,7 +132,7 @@ const MangaList: React.FC = () => {
             </Link>
           ))
         )}
-      </motion.div>
+      </div>
     </div>
   );
 };
