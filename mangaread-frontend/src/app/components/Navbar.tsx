@@ -13,8 +13,7 @@ const Navbar = () => {
   useEffect(() => {
     // Check if user is signed in
     const authToken = localStorage.getItem('authToken');
-    const username = localStorage.getItem('username')
-    console.log(username)
+    const username = localStorage.getItem('username');
     setIsSignedIn(!!authToken);
 
     // Fetch user data if signed in
@@ -45,7 +44,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('username')
+    localStorage.removeItem('username');
     setIsSignedIn(false);
     // Optional: Redirect or reload to another page after logout
     window.location.reload();
@@ -56,7 +55,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-bgmain text-white p-4 shadow-lg">
+    <div className="bg-bgmain text-white p-4 shadow-lg sticky top-0 z-50">
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2">
@@ -102,27 +101,27 @@ const Navbar = () => {
                 <div className="md:flex items-center gap-2">
                   {user && user.profilePicture ? (
                     <div className='rounded-full '>
-                    <img
-                      src={`http://localhost:5000/${user.profilePicture.replace(/\\/g, '/')}`}
-                      alt="Profile"
-                      width={100}
-                      height={100}
-                      className="rounded-full ml-44"
-                      style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }} // Apply border-radius: 50% inline
-                    />
-                  </div>
+                      <img
+                        src={`http://localhost:5000/${user.profilePicture.replace(/\\/g, '/')}`}
+                        alt="Profile"
+                        width={100}
+                        height={100}
+                        className="rounded-full ml-44"
+                        style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }} // Apply border-radius: 50% inline
+                      />
+                    </div>
                   ) : (
                     <FaUserCircle className="text-3xl" />
                   )}
                 </div>
               </Link>
               <div className='hidden md:flex'>
-              <button
-                onClick={handleLogout}
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
-              >
-                Logout
-              </button>
+                <button
+                  onClick={handleLogout}
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                >
+                  Logout
+                </button>
               </div>
             </div>
           ) : (
@@ -168,12 +167,36 @@ const Navbar = () => {
           </button>
         </div>
       </nav>
-      {isMobileMenuOpen && (
-        <div className="md:hidden">
+      <div
+        className={`fixed top-0 right-0 h-full w-3/4 bg-bgmain transform ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        } transition-transform duration-300 ease-in-out z-50`}
+      >
+        <div className="p-4">
+          <button
+            onClick={toggleMobileMenu}
+            className="text-white focus:outline-none mb-4"
+          >
+            <svg
+              className="w-6 h-6"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          </button>
           <div className="flex flex-col items-center mt-2">
             <Link
               href="/"
-              className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
+              className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+              onClick={toggleMobileMenu}
             >
               Home
             </Link>
@@ -181,25 +204,31 @@ const Navbar = () => {
               <>
                 <Link
                   href="/mymangas"
-                  className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
+                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  onClick={toggleMobileMenu}
                 >
                   My Manga
                 </Link>
                 <Link
                   href="/upload"
-                  className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
+                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  onClick={toggleMobileMenu}
                 >
                   Upload
                 </Link>
                 <Link
                   href="/all-mangas"
-                  className="text-sm font-semibold hover:text-gray-300 transition duration-300 py-2"
+                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  onClick={toggleMobileMenu}
                 >
                   Read
                 </Link>
                 <button
-                  onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2"
+                  onClick={() => {
+                    handleLogout();
+                    toggleMobileMenu();
+                  }}
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-4"
                 >
                   Logout
                 </button>
@@ -210,12 +239,14 @@ const Navbar = () => {
                 <Link
                   href="/login"
                   className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2"
+                  onClick={toggleMobileMenu}
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
                   className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2"
+                  onClick={toggleMobileMenu}
                 >
                   Sign Up
                 </Link>
@@ -223,7 +254,7 @@ const Navbar = () => {
             )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };

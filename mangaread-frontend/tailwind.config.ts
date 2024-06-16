@@ -9,6 +9,7 @@ const config: Config = {
   theme: {
     extend: {
       backgroundImage: {
+        "bgcard": "linear-gradient(to bottom, #030712, #0e1016, #16161a, #1b1b1d, #212121);",
         "bgmain": "linear-gradient(to right bottom, #000000, #151515, #242323, #323232, #424141)",
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
         "gradient-conic":

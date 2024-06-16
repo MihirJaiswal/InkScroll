@@ -2,6 +2,9 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 interface Manga {
   _id: string;
@@ -24,9 +27,7 @@ const RandomMangaList: React.FC = () => {
         const response = await fetch('http://localhost:5000/api/mangas');
         if (response.ok) {
           const data: Manga[] = await response.json();
-          // Shuffle the array of mangas
           const shuffledMangas = shuffleArray(data);
-          // Get the first 5 items from shuffled array
           const randomMangasSlice = shuffledMangas.slice(0, 5);
           setRandomMangas(randomMangasSlice);
         } else {
@@ -42,7 +43,6 @@ const RandomMangaList: React.FC = () => {
     fetchMangas();
   }, []);
 
-  // Function to shuffle an array using Fisher-Yates algorithm
   const shuffleArray = (array: Manga[]) => {
     const shuffledArray = [...array];
     for (let i = shuffledArray.length - 1; i > 0; i--) {
@@ -52,47 +52,88 @@ const RandomMangaList: React.FC = () => {
     return shuffledArray;
   };
 
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 5,
+    slidesToScroll: 1,
+    centerMode: true,
+    centerPadding: '20px',
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerPadding: '20px',
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '0px',
+        },
+      },
+    ],
+  };
+
   return (
     <div className="container mx-auto px-4 md:px-4">
       <div className="py-12 text-center md:text-left">
         <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
+      <div className="my-12">
         {loading ? (
           <div className="col-span-full text-center text-lg text-gray-700">
             Loading...
           </div>
         ) : (
-          randomMangas.map(({ _id, title, description, pdf, coverImage, author }) => (
-            <motion.div
-              key={_id}
-              className="flex flex-col items-center rounded-lg p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1 }}
-            >
-              <div className="md:w-44 md:h-40 w-32 h-32 mb-4">
-                <img
-                  src={`http://localhost:5000/${coverImage}`}
-                  alt={title}
-                  className="object-cover w-full h-full rounded-lg"
-                />
-              </div>
-              <div className="flex flex-col items-center text-center">
-                <h1 className="text-lg md:text-xl font-semibold mb-2 text-red-500">{title}</h1>
-                <p className="text-sm text-gray-500">{author.username}</p>
-              </div>
-            </motion.div>
-          ))
+          <Slider {...settings}>
+            {randomMangas.map(({ _id, title, description, pdf, coverImage, author }) => (
+              <Link href={`/${title}`} key={_id}>
+                <motion.div
+                  key={_id}
+                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                  initial={{ opacity: 0, }}
+                  whileInView={{ opacity: 1,}}
+                  transition={{ duration: 1 }}
+                >
+                  <div className="md:w-44 md:h-40 h-32 w-32 mb-4">
+                    <img
+                      src={`http://localhost:5000/${coverImage}`}
+                      alt={title}
+                      className="object-cover w-full h-full rounded-lg"
+                    />
+                  </div>
+                  <div className="flex flex-col items-center text-center">
+                    <h1 className="text-lg md:text-xl font-semibold mb-2 text-red-500">{title}</h1>
+                    <p className="text-sm text-gray-500">{author.username}</p>
+                  </div>
+                </motion.div>
+              </Link>
+            ))}
+          </Slider>
         )}
       </div>
       <Link href='/all-mangas'>
-            <div className='flex items-center justify-center w-full my-12'>
-            <p className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
-                  Read More
-                </p>
-            </div>
-        </Link>
+        <div className='flex items-center justify-center w-full my-12'>
+          <p className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+            Read More
+          </p>
+        </div>
+      </Link>
     </div>
   );
 };
