@@ -33,7 +33,7 @@ const GenresDisplay: React.FC = () => {
         {genres.map((genre) => (
           <div
             key={genre.name}
-            className="flex flex-col items-center justify-center md:p-4 p-1 bg-gray-950 md:bg-bgcard border border-gray-500 rounded-md shadow-lg cursor-pointer hover:bg-gray-800"
+            className="flex flex-col items-center justify-center md:p-4 p-1 bg-gray-600 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-400 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
             onClick={() => handleGenreClick(genre.name)}
           >
             <img src={genre.imageSrc} alt={genre.name} width={150} height={150} className="md:rounded-lg h-full w-auto object-cover" />

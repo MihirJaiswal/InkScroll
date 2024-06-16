@@ -28,7 +28,7 @@ const RandomMangaList: React.FC = () => {
         if (response.ok) {
           const data: Manga[] = await response.json();
           const shuffledMangas = shuffleArray(data);
-          const randomMangasSlice = shuffledMangas.slice(0, 5);
+          const randomMangasSlice = shuffledMangas.slice(0, 10);
           setRandomMangas(randomMangasSlice);
         } else {
           throw new Error('Failed to fetch mangas');
@@ -118,7 +118,7 @@ const RandomMangaList: React.FC = () => {
                     />
                   </div>
                   <div className="flex flex-col items-center text-center">
-                    <h1 className="text-lg md:text-xl font-semibold mb-2 text-red-500">{title}</h1>
+                    <h1 className="text-sm md:text-xl font-semibold mb-2 text-red-500">{title}</h1>
                     <p className="text-sm text-gray-500">{author.username}</p>
                   </div>
                 </motion.div>
