@@ -105,7 +105,7 @@ const RandomMangaList: React.FC = () => {
               <Link href={`/${title}`} key={_id}>
                 <motion.div
                   key={_id}
-                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer my-4"
                   initial={{ opacity: 0, }}
                   whileInView={{ opacity: 1,}}
                   transition={{ duration: 1 }}
