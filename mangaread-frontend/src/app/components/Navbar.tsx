@@ -2,21 +2,20 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { FaUserCircle } from 'react-icons/fa';
 import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png';
 
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState<any>(null); // State to hold user data
+  const [user, setUser] = useState<any>(null);
+  const pathname = usePathname();
 
   useEffect(() => {
-    // Check if user is signed in
     const authToken = localStorage.getItem('authToken');
-    const username = localStorage.getItem('username');
     setIsSignedIn(!!authToken);
 
-    // Fetch user data if signed in
     const fetchUserData = async () => {
       try {
         const response = await fetch('http://localhost:5000/api/users/profile', {
@@ -30,10 +29,9 @@ const Navbar = () => {
         }
 
         const userData = await response.json();
-        setUser(userData); // Set the entire user data
+        setUser(userData);
       } catch (error) {
         console.error('Error fetching user data:', error);
-        // Handle error (e.g., redirect to login, clear auth tokens, etc.)
       }
     };
 
@@ -44,9 +42,7 @@ const Navbar = () => {
 
   const handleLogout = () => {
     localStorage.removeItem('authToken');
-    localStorage.removeItem('username');
     setIsSignedIn(false);
-    // Optional: Redirect or reload to another page after logout
     window.location.reload();
   };
 
@@ -73,24 +69,30 @@ const Navbar = () => {
 
           {isSignedIn && (
             <>
-              <Link
-                href="/favourite"
-                className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
-              >
-                Favorites
-              </Link>
-              <Link
-                href="/upload"
-                className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
-              >
-                Upload
-              </Link>
-              <Link
-                href="/all-mangas"
-                className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
-              >
-                Read
-              </Link>
+              {pathname !== '/favourite' && (
+                <Link
+                  href="/favourite"
+                  className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
+                >
+                  Favorites
+                </Link>
+              )}
+              {pathname !== '/upload' && (
+                <Link
+                  href="/upload"
+                  className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
+                >
+                  Upload
+                </Link>
+              )}
+              {pathname !== '/all-mangas' && (
+                <Link
+                  href="/all-mangas"
+                  className="text-sm hover:text-gray-300 transition duration-300 hidden md:block"
+                >
+                  Read
+                </Link>
+              )}
             </>
           )}
         </div>
@@ -107,7 +109,7 @@ const Navbar = () => {
                         width={100}
                         height={100}
                         className="rounded-full ml-44"
-                        style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }} // Apply border-radius: 50% inline
+                        style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }}
                       />
                     </div>
                   ) : (
@@ -195,7 +197,9 @@ const Navbar = () => {
           <div className="flex flex-col items-center mt-2">
             <Link
               href="/"
-              className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+              className={`text-lg font-semibold hover:text-gray-300 transition duration-300 py-4 w-full text-center my-2 ${
+                pathname === '/' ? 'bg-gray-700' : ''
+              }`}
               onClick={toggleMobileMenu}
             >
               Home
@@ -203,22 +207,28 @@ const Navbar = () => {
             {isSignedIn && (
               <>
                 <Link
-                  href="/mymangas"
-                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  href="/favourite"
+                  className={`text-lg font-semibold hover:text-gray-300 transition duration-300 py-4 w-full text-center mb-2 ${
+                    pathname === '/favourite' ? 'bg-gray-700' : ''
+                  }`}
                   onClick={toggleMobileMenu}
                 >
-                  My Manga
+                  Favorites
                 </Link>
                 <Link
                   href="/upload"
-                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  className={`text-lg font-semibold hover:text-gray-300 transition duration-300 py-4 w-full text-center mb-2 ${
+                    pathname === '/upload' ? 'bg-gray-700' : ''
+                  }`}
                   onClick={toggleMobileMenu}
                 >
                   Upload
                 </Link>
                 <Link
                   href="/all-mangas"
-                  className="text-lg font-semibold hover:text-gray-300 transition duration-300 py-4"
+                  className={`text-lg font-semibold hover:text-gray-300 transition duration-300 py-4 w-full text-center mb-4 ${
+                    pathname === '/all-mangas' ? 'bg-gray-700' : ''
+                  }`}
                   onClick={toggleMobileMenu}
                 >
                   Read
