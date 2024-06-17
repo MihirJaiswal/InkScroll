@@ -91,8 +91,8 @@ const RandomMangaList: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-4">
-      <div className="py-12 text-center md:text-left">
-        <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
+      <div className="mt-12 text-center md:text-left">
+        <h1 className="py-2 text-4xl text-black dark:text-gray-100 font-bold">Mangas</h1>
       </div>
       <div className="my-12">
         {loading ? (
@@ -105,7 +105,7 @@ const RandomMangaList: React.FC = () => {
               <Link href={`/${title}`} key={_id}>
                 <motion.div
                   key={_id}
-                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer my-4"
+                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-blue-100 dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 dark:bg-opacity-10 border border-gray-950  dark:border-gray-100 dark:shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer my-4"
                   initial={{ opacity: 0, }}
                   whileInView={{ opacity: 1,}}
                   transition={{ duration: 1 }}
@@ -119,7 +119,7 @@ const RandomMangaList: React.FC = () => {
                   </div>
                   <div className="flex flex-col items-center text-center">
                     <h1 className="text-sm md:text-xl font-semibold mb-2 text-red-500">{title}</h1>
-                    <p className="text-sm text-gray-500">{author.username}</p>
+                    <p className="text-sm text-gray-950 dark:text-gray-500">{author.username}</p>
                   </div>
                 </motion.div>
               </Link>

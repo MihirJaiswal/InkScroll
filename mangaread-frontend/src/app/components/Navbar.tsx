@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { FaUserCircle } from 'react-icons/fa';
 import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png';
+import { ModeToggle } from './Toggle';
 
 const Navbar = () => {
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -51,7 +52,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="bg-bgmain text-white p-4 shadow-lg sticky top-0 z-50">
+    <div className="dark:bg-bgmain bg-blue-100 text-black dark:text-white p-4 shadow-lg sticky top-0 z-50">
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2">
@@ -62,7 +63,7 @@ const Navbar = () => {
               height={50}
               className="w-10"
             />
-            <span className="text-lg font-semibold text-white hidden md:block ml-2">
+            <span className="text-lg font-semibold text-black dark:text-white hidden md:block ml-2">
               Manga Sphere
             </span>
           </Link>
@@ -102,13 +103,13 @@ const Navbar = () => {
               <Link href="/profile">
                 <div className="md:flex items-center gap-2">
                   {user && user.profilePicture ? (
-                    <div className='rounded-full '>
+                    <div className='rounded-full'>
                       <img
                         src={`http://localhost:5000/${user.profilePicture.replace(/\\/g, '/')}`}
                         alt="Profile"
                         width={100}
                         height={100}
-                        className="rounded-full ml-44"
+                        className="rounded-full ml-44  border border-gray-700 "
                         style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }}
                       />
                     </div>
@@ -125,6 +126,9 @@ const Navbar = () => {
                   Logout
                 </button>
               </div>
+              <div className='hidden md:block border border-gray-600 rounded-lg'>
+              <ModeToggle/>
+              </div>
             </div>
           ) : (
             <>
@@ -140,6 +144,7 @@ const Navbar = () => {
               >
                 Sign Up
               </Link>
+              <ModeToggle/>
             </>
           )}
         </div>
