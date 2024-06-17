@@ -165,20 +165,20 @@ const MangaDetail: React.FC = () => {
       <Navbar />
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
-          <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">{manga.title}</h1>
+          <h1 className="text-5xl font-bold text-black dark:text-gray-100 mb-12 text-center">{manga.title}</h1>
           <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
             <div className='md:w-full flex justify-center'>
-              <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain" />
+              <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain border border-black" />
             </div>
             <div className='flex flex-col gap-4 md:w-full'>
               <div className='flex flex-col justify-center items-center gap-4'>
                 {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
-                <p className={`text-white md:font-medium m-2 text-xl text-center ${showFullDescription ? '' : 'line-clamp-2'}`}>
+                <p className={`dark:text-white text-black md:font-medium m-2 text-xl text-center ${showFullDescription ? '' : 'line-clamp-2'}`}>
                   {manga.description}
                 </p>
                 {!showFullDescription && (
                   <button
-                    className="text-blue-500 font-bold hover:underline focus:outline-none"
+                    className="dark:text-blue-500 text-blue-700 font-bold hover:underline focus:outline-none"
                     onClick={() => setShowFullDescription(true)}
                   >
                     Load More
@@ -186,22 +186,22 @@ const MangaDetail: React.FC = () => {
                 )}
               </div>
               <div className="md:px-12 flex flex-wrap md:flex-row justify-center gap-4">
-                <p className="text-gray-200 m-2 text-center flex items-center"><FaUserCircle className="mr-2" /> {manga.author.username}</p>
-                <p className="text-gray-200 m-2 text-center flex items-center"><FaTags className="mr-2" /> {manga.tags.join(', ')}</p>
-                <p className="text-gray-200 m-2 text-center flex items-center"><FaStar className="mr-2" /> {manga.rating}/5</p>
+                <p className="dark:text-gray-200 text-black m-2 text-center flex items-center"><FaUserCircle className="mr-2" /> {manga.author.username}</p>
+                <p className="dark:text-gray-200 text-black m-2 text-center flex items-center"><FaTags className="mr-2" /> {manga.tags.join(', ')}</p>
+                <p className="dark:text-gray-200 text-black m-2 text-center flex items-center"><FaStar className="mr-2" /> {manga.rating}/5</p>
               </div>
               <div className='flex flex-row items-center justify-center gap-4 mb-4'>
                 {manga.pdf && (
                   <div className="mt-4 flex justify-center">
                     <Link href={`/read/${newurl}`} passHref>
-                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Start Reading</button>
+                      <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 border border-black">Start Reading</button>
                     </Link>
                   </div>
                 )}
                 {isSignedIn && (
                   <div className="mt-4 flex justify-center">
                     <button
-                      className={`px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white`}
+                      className={`px-4 py-2 rounded-lg ${isFavorite ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'} text-white border border-black`}
                       onClick={handleFavoriteToggle}
                     >
                       {isFavorite ? 'Remove from Favorites' : 'Add to Favorites'}
@@ -224,7 +224,7 @@ const MangaDetail: React.FC = () => {
                             <img
                               src={`http://localhost:5000/${manga.coverImage}`}
                               alt={`Chapter ${chapter.chapterNumber}`}
-                              className="w-auto h-48 object-cover rounded-lg mb-4"
+                              className="w-auto h-48 object-cover rounded-lg mb-4" 
                             />
                             <p className="text-gray-300 text-lg font-semibold">
                               <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
@@ -243,15 +243,18 @@ const MangaDetail: React.FC = () => {
               </>
             )}
           </div>
-          <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+          
           {isSignedIn && (
-            <CommentSection
+            <div>
+              <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+              <CommentSection
               mangaTitle={title}
               comments={manga.comments}
               isSignedIn={isSignedIn}
               onCommentAdded={handleCommentAdded}
               onCommentDeleted={handleCommentDeleted}
             />
+            </div>
           )}
         </div>
       </div>

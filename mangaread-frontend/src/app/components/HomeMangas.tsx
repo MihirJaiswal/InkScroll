@@ -105,16 +105,16 @@ const RandomMangaList: React.FC = () => {
               <Link href={`/${title}`} key={_id}>
                 <motion.div
                   key={_id}
-                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-blue-100 dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 dark:bg-opacity-10 border border-gray-950  dark:border-gray-100 dark:shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer my-4"
-                  initial={{ opacity: 0, }}
-                  whileInView={{ opacity: 1,}}
+                  className="flex flex-col items-center justify-center w-48 md:w-64 p-4 bg-white dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40 dark:bg-opacity-10 border border-black dark:border-gray-100 dark:shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer my-4"
+                  initial={{ opacity: 0 }}
+                  whileInView={{ opacity: 1 }}
                   transition={{ duration: 1 }}
                 >
                   <div className="md:w-44 md:h-40 h-32 w-32 mb-4">
                     <img
                       src={`http://localhost:5000/${coverImage}`}
                       alt={title}
-                      className="object-cover w-full h-full rounded-lg"
+                      className="object-cover w-full h-full rounded-lg border border-gray-900"
                     />
                   </div>
                   <div className="flex flex-col items-center text-center">
@@ -129,7 +129,7 @@ const RandomMangaList: React.FC = () => {
       </div>
       <Link href='/all-mangas'>
         <div className='flex items-center justify-center w-full my-12'>
-          <p className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300">
+          <p className="mt-4 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition duration-300 border border-gray-900">
             Read More
           </p>
         </div>

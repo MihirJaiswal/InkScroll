@@ -91,7 +91,7 @@ const ProfilePage: React.FC = () => {
     <div>
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
-          <h1 className="text-5xl font-bold text-gray-100 mb-12 text-center">User Profile</h1>
+          <h1 className="text-5xl font-bold dark:text-gray-100 text-black mb-12 text-center">User Profile</h1>
           <div className="flex flex-col md:flex-row justify-between items-center md:mt-16 mb-12">
             <div className='w-full flex flex-col items-center my-8'>
               <img 
@@ -100,21 +100,21 @@ const ProfilePage: React.FC = () => {
                 className="w-32 md:w-56 md:h-56 h-32 rounded-full mb-4 object-cover" 
               />
               <div className="text-center">
-                <p className="text-white text-lg">{user.username}</p>
-                <p className="text-gray-400">{user.email}</p>
+                <p className="dark:text-white text-black text-lg">{user.username}</p>
+                <p className="dark:text-gray-400 text-gray-700">{user.email}</p>
               </div>
               <div className="mt-4 flex space-x-8">
                 <div className="text-center">
-                  <p className="text-white text-lg font-semibold">{user.followersCount}</p>
-                  <p className="text-gray-400">Followers</p>
+                  <p className="dark:text-white text-black text-lg font-semibold">{user.followersCount}</p>
+                  <p className="dark:text-gray-400 text-gray-700">Followers</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-white text-lg font-semibold">{user.followingCount}</p>
-                  <p className="text-gray-400">Following</p>
+                  <p className="dark:text-white text-black text-lg font-semibold">{user.followingCount}</p>
+                  <p className="dark:text-gray-400 text-gray-700">Following</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-white text-lg font-semibold">{user.mangasUploaded}</p>
-                  <p className="text-gray-400">Mangas Uploaded</p>
+                  <p className="dark:text-white text-black text-lg font-semibold">{user.mangasUploaded}</p>
+                  <p className="dark:text-gray-400 text-gray-700">Mangas Uploaded</p>
                 </div>
               </div>
             </div>

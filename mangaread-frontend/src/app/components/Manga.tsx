@@ -65,7 +65,7 @@ const MangaList: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-4">
       <div className="py-12 text-center md:text-left">
-        <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas</h1>
+        <h1 className="py-2 text-4xl text-black dark:text-gray-100 font-bold">Mangas</h1>
       </div>
       <div className="flex flex-wrap w-full justify-center md:justify-start mb-6">
         <div className="relative">
@@ -74,7 +74,7 @@ const MangaList: React.FC = () => {
             placeholder="Search by title..."
             value={searchTerm}
             onChange={handleSearchChange}
-            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600"
+            className="px-4 py-2 rounded-lg bg-gray-200 text-gray-800 focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-600 border border-black"
           />
           <div className="absolute inset-y-0 right-3 flex items-center">
             {searchTerm && (
@@ -108,7 +108,7 @@ const MangaList: React.FC = () => {
           <button
             key={genre}
             onClick={() => handleGenreClick(genre)}
-            className={`px-4 py-2 m-2 rounded-lg text-white ${selectedGenre === genre ? 'bg-blue-600' : 'bg-gray-600'} hover:bg-blue-700 focus:outline-none`}
+            className={`px-4 py-2 m-2 rounded-lg dark:text-white text-black border border-gray-900 ${selectedGenre === genre ? 'dark:bg-blue-600 bg-blue-400' : 'dark:bg-gray-600 bg-gray-300'} hover:dark:bg-blue-700 hover:bg-blue-400 focus:outline-none`}
           >
             {genre}
           </button>
@@ -123,7 +123,7 @@ const MangaList: React.FC = () => {
           filteredMangas.map(({ _id, title, description, pdf, coverImage, author }) => (
             <Link href={`/${title}`} key={_id}>
               <motion.div
-                className="flex flex-col items-center rounded-lg p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                className="flex flex-col items-center rounded-lg p-4 bg-white dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40 dark:bg-opacity-10 border dark:border-gray-100 border-black shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}

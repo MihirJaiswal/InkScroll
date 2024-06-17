@@ -48,7 +48,7 @@ const GenreMangas: React.FC = () => {
   return (
     <div className="container mx-auto px-4 md:px-4 h-full">
       <div className="py-12 text-center md:text-left">
-        <h1 className="py-2 text-4xl text-gray-100 font-bold">Mangas in {genre}</h1>
+        <h1 className="py-2 text-4xl dark:text-gray-100 text-black font-bold">Mangas in {genre}</h1>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
         {loading ? (
@@ -59,7 +59,7 @@ const GenreMangas: React.FC = () => {
           mangas.map(({ _id, title, description, pdf, coverImage, author }) => (
             <Link href={`/${title}`} key={_id}>
               <motion.div
-                className="flex flex-col items-center rounded-lg p-4 bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
+                className="flex flex-col items-center rounded-lg p-4 bg-white dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-30 dark:bg-opacity-10 border border-gray-100 shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer"
                 initial={{ opacity: 0, y: 50 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 1 }}

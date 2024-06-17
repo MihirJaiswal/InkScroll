@@ -66,7 +66,7 @@ const UploadManga: React.FC = () => {
     <div className="container mx-auto md:px-4 md:py-8 text-gray-200">
       <div className="flex flex-wrap justify-center items-start">
         <div className="w-full md:w-2/3 lg:w-1/2 p-4">
-          <div className="bg-gray-900 p-2 md:p-8 rounded-lg shadow-lg border border-gray-700">
+          <div className="bg-gray-900 p-8 rounded-2xl shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
             <h1 className="md:text-3xl text-xl font-bold mb-4 text-center text-gray-200">Upload Manga</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="flex flex-col">

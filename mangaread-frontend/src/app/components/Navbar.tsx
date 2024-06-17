@@ -52,7 +52,7 @@ const Navbar = () => {
   };
 
   return (
-    <div className="dark:bg-bgmain bg-blue-100 text-black dark:text-white p-4 shadow-lg sticky top-0 z-50">
+    <div className="dark:bg-bgmain bg-bgnav text-black dark:text-white p-4 shadow-lg sticky top-0 z-50">
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-12">
           <Link href="/" className="flex items-center gap-2">
@@ -121,7 +121,7 @@ const Navbar = () => {
               <div className='hidden md:flex'>
                 <button
                   onClick={handleLogout}
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300"
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 border border-black"
                 >
                   Logout
                 </button>
@@ -134,17 +134,19 @@ const Navbar = () => {
             <>
               <Link
                 href="/login"
-                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block"
+                className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block border border-gray-900"
               >
                 Login
               </Link>
               <Link
                 href="/signup"
-                className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block"
+                className="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 hidden md:block border border-gray-900"
               >
                 Sign Up
               </Link>
+              <div className='border border-gray-900 rounded-lg'>
               <ModeToggle/>
+              </div>
             </>
           )}
         </div>

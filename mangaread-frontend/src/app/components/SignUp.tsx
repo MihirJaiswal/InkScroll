@@ -51,42 +51,42 @@ const Signup = () => {
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
-            <label className="block text-gray-400 mb-2" htmlFor="username">Username</label>
+            <label className="block text-gray-200 dark:text-gray-400 mb-2" htmlFor="username">Username</label>
             <input
               type="text"
               id="username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              className="w-full px-3 py-2 rounded-lg bg-gray-900 dark:bg-gray-700 text-white"
               required
             />
           </div>
           <div className="mb-4">
-            <label className="block text-gray-400 mb-2" htmlFor="email">Email</label>
+            <label className="block text-gray-200 dark:text-gray-400 mb-2" htmlFor="email">Email</label>
             <input
               type="email"
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              className="w-full px-3 py-2 rounded-lg bg-gray-900 dark:bg-gray-700 text-white"
               required
             />
           </div>
           <div className="mb-6">
-            <label className="block text-gray-400 mb-2" htmlFor="password">Password</label>
+            <label className="block text-gray-200 dark:text-gray-400 mb-2" htmlFor="password">Password</label>
             <input
               type="password"
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg bg-gray-700 text-white"
+              className="w-full px-3 py-2 rounded-lg bg-gray-900 dark:bg-gray-700 text-white"
               required
             />
           </div>
           <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition duration-300">Sign Up</button>
         </form>
         <div className="mt-4 text-center">
-          <p className="text-gray-400">Already have an account? <Link href="/login" className="text-blue-400 hover:underline">Log in</Link></p>
+          <p className="dark:text-gray-400 text-white">Already have an account? <Link href="/login" className="text-blue-400 hover:underline">Log in</Link></p>
         </div>
       </div>
     </div>
