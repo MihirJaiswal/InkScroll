@@ -74,3 +74,29 @@
       @apply bg-background text-foreground;
     }
   }
+
+  .slick-prev,
+.slick-next {
+  z-index: 1;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.slick-prev {
+  left: 10px;
+}
+
+.slick-next {
+  right: 10px;
+}
+
+.slick-dots {
+  bottom: -30px;
+}
+
+@media (max-width: 480px) {
+  .slick-prev,
+  .slick-next {
+    display: none !important;
+  }
+}

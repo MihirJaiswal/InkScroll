@@ -52,10 +52,11 @@ const Navbar = () => {
   };
 
   return (
-    <div className="dark:bg-bgmain bg-bgnav text-black dark:text-white p-4 shadow-lg sticky top-0 z-50">
+    <div className="dark:bg-bgmain bg-bgnav text-black dark:text-white md:p-4 py-4 shadow-lg sticky top-0 z-50">
       <nav className="flex justify-between items-center container mx-auto">
         <div className="flex items-center gap-12">
-          <Link href="/" className="flex items-center gap-2">
+         <div className='flex justify-between items-center gap-2'>
+         <Link href="/" className="flex items-center gap-2">
             <Image
               src={logo}
               alt="Logo"
@@ -67,7 +68,10 @@ const Navbar = () => {
               Manga Sphere
             </span>
           </Link>
-
+          <div className='border md:hidden border-gray-900 rounded-lg'>
+              <ModeToggle/>
+            </div>
+         </div>
           {isSignedIn && (
             <>
               {pathname !== '/favourite' && (
@@ -109,7 +113,7 @@ const Navbar = () => {
                         alt="Profile"
                         width={100}
                         height={100}
-                        className="rounded-full ml-44  border border-gray-700 "
+                        className="rounded-full border ml-28 border-gray-700 "
                         style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }}
                       />
                     </div>
@@ -144,7 +148,7 @@ const Navbar = () => {
               >
                 Sign Up
               </Link>
-              <div className='border border-gray-900 rounded-lg'>
+              <div className='border hidden md:block border-gray-900 rounded-lg mr-28 md:mr-0'>
               <ModeToggle/>
               </div>
             </>
@@ -177,7 +181,7 @@ const Navbar = () => {
         </div>
       </nav>
       <div
-        className={`fixed top-0 right-0 h-full w-3/4 bg-bgmain transform ${
+        className={`fixed top-0 right-0 h-full w-3/4 dark:bg-bgmain bg-lightbg transform ${
           isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
         } transition-transform duration-300 ease-in-out z-50`}
       >
@@ -205,7 +209,7 @@ const Navbar = () => {
             <Link
               href="/"
               className={`text-lg font-semibold hover:text-gray-300 transition duration-300 py-4 w-full text-center my-2 ${
-                pathname === '/' ? 'bg-gray-700' : ''
+                pathname === '/' ? 'dark:bg-gray-700 bg-blue-500' : ''
               }`}
               onClick={toggleMobileMenu}
             >
