@@ -40,14 +40,6 @@ const Signup = () => {
     <div className="py-28 flex items-center justify-center relative p-4">
       <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
       <div className="relative z-10 bg-black p-8 rounded-lg shadow-lg max-w-md w-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-100">
-      <div className="flex flex-col items-center justify-center mb-8">
-            <Image 
-            src={logo}
-             alt="Logo" 
-             width={100}
-             height={100}
-             className="mr-2 w-16" /> {/* Adjust the width and height as needed */}
-          </div>
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
