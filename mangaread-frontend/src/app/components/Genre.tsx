@@ -1,6 +1,6 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import { usePathname } from 'next/navigation'; // Import usePathname from next/navigation
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 
@@ -15,12 +15,20 @@ interface Manga {
   nsfw: boolean;
 }
 
+// Define the mapping of genres to cover images
+const genreCoverImages: { [key: string]: string } = {
+  Action: 'https://static1.cbrimages.com/wordpress/wp-content/uploads/2022/03/pjimage-116.jpg?q=50&fit=contain&w=1140&h=&dpr=1.5',
+  romance: '/path/to/romance-cover.jpg',
+  fantasy: '/path/to/fantasy-cover.jpg',
+  // Add more genres and their corresponding cover images
+};
+
 const GenreMangas: React.FC = () => {
   const [mangas, setMangas] = useState<Manga[]>([]);
   const [loading, setLoading] = useState(true);
-  const pathname = usePathname(); // Use usePathname hook to get current pathname
-  const genre = pathname.split('/').pop(); // Extract genre from the pathname
-  console.log(genre)
+  const pathname = usePathname();
+  const genre = pathname.split('/').pop();
+  console.log(genre);
 
   useEffect(() => {
     const fetchMangas = async () => {
@@ -47,8 +55,17 @@ const GenreMangas: React.FC = () => {
 
   return (
     <div className="container mx-auto px-4 md:px-4 h-full">
-      <div className="py-12 text-center md:text-left">
+      <div className="mt-12 text-center md:text-left">
         <h1 className="py-2 text-4xl dark:text-gray-100 text-black font-bold">Mangas in {genre}</h1>
+        {genre && genreCoverImages[genre] && (
+          <div className="w-full mb-8">
+            <img
+              src={genreCoverImages[genre]}
+              alt={`${genre} cover`}
+              className="w-full h-64 object-cover rounded-lg"
+            />
+          </div>
+        )}
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
         {loading ? (
