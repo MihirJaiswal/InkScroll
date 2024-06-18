@@ -165,15 +165,18 @@ const MangaDetail: React.FC = () => {
       <Navbar />
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
-          <h1 className="text-5xl font-bold text-black dark:text-gray-100 mb-12 text-center">{manga.title}</h1>
+          
           <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
+            
             <div className='md:w-full flex justify-center'>
               <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain border border-black" />
             </div>
+            
             <div className='flex flex-col gap-4 md:w-full'>
+            <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-gray-100 my-4 text-center">{manga.title}</h1>
               <div className='flex flex-col justify-center items-center gap-4'>
                 {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
-                <p className={`dark:text-white text-black md:font-medium m-2 text-xl text-center ${showFullDescription ? '' : 'line-clamp-2'}`}>
+                <p className={`dark:text-white text-black md:font-medium m-2 px-4 text-xl text-justify ${showFullDescription ? '' : 'line-clamp-2'}`}>
                   {manga.description}
                 </p>
                 {!showFullDescription && (
@@ -246,7 +249,7 @@ const MangaDetail: React.FC = () => {
           
           {isSignedIn && (
             <div>
-              <hr className="my-12 h-0.5 border-t-0 bg-neutral-100 dark:bg-white/10" />
+              <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
               <CommentSection
               mangaTitle={title}
               comments={manga.comments}

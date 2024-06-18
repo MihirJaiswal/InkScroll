@@ -2,6 +2,7 @@
 const Manga = require('../models/Manga');
 const fs = require('fs');
 const axios = require('axios'); // Assuming you'll use axios for API requests
+const { validationResult } = require('express-validator');
 
 // Function to upload manga
 exports.uploadManga = async (req, res) => {
@@ -112,6 +113,12 @@ exports.addComment = async (req, res) => {
   const title = req.params.title;
   const { text } = req.body;
 
+  // Validate request body
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
     const manga = await Manga.findOne({ title });
     if (!manga) {
@@ -128,12 +135,46 @@ exports.addComment = async (req, res) => {
 
     // Populate the newly added comment's user field
     const populatedManga = await Manga.findOne({ title }).populate('comments.user', 'username profilePicture');
-    const addedComment = populatedManga.comments.find(comment => comment._id.equals(newComment._id));
+    const addedComment = populatedManga.comments.find(comment => comment.text === newComment.text && comment.user.equals(req.user.id));
 
-    res.json(addedComment);
-
+    console.log('Added Comment:', addedComment);
+    res.status(201).json(addedComment);
   } catch (err) {
     console.error('Error adding comment:', err);
     res.status(500).send('Server error');
+  }
+};
+
+//delete commet
+exports.deleteComment = async (req, res) => {
+  const title = req.params.title;
+  const commentId = req.params.commentId;
+
+  try {
+    const manga = await Manga.findOne({ title });
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    // Find the comment to delete
+    const comment = manga.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    // Check if the comment belongs to the authenticated user
+    if (comment.user.toString() !== req.user.id) {
+      return res.status(401).json({ msg: 'User not authorized' });
+    }
+
+    // Remove the comment
+    manga.comments.pull(commentId);
+    await manga.save();
+
+    res.json({ msg: 'Comment deleted' });
+
+  } catch (err) {
+    console.error('Error deleting comment:', err);
+    res.status(500).json({ error: 'Server error' });
   }
 };

@@ -1,6 +1,6 @@
 //routes/mangaRoutes.js
 const express = require('express');
-const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment } = require('../controllers/mangaController');
+const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment, deleteComment } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -103,6 +103,10 @@ router.post('/:title/comments', [authMiddleware, [
     return res.status(400).json({ errors: errors.array() });
   }
   addComment(req, res);
+});
+
+router.delete('/:title/comments/:commentId', authMiddleware, async (req, res) => {
+  deleteComment(req, res);
 });
 
 module.exports = router;

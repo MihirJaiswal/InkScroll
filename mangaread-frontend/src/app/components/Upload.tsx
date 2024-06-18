@@ -65,7 +65,7 @@ const UploadManga: React.FC = () => {
   return (
     <div className="container mx-auto md:px-4 md:py-8 text-gray-200">
       <div className="flex flex-wrap justify-center items-start">
-        <div className="w-full md:w-2/3 lg:w-1/2 p-4">
+        <div className="w-full md:w-2/3 lg:w-1/2 md:p-4 py-4">
           <div className="bg-gray-900 p-8 rounded-2xl shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
             <h1 className="md:text-3xl text-xl font-bold mb-4 text-center text-gray-200">Upload Manga</h1>
             <form onSubmit={handleSubmit} className="space-y-6">
@@ -182,17 +182,7 @@ const UploadManga: React.FC = () => {
             </form>
           </div>
         </div>
-        <div className="w-full hidden md:w-1/3 lg:w-1/2 p-4 md:flex flex-col justify-center items-center gap-4" >
-          <img src="https://i.ibb.co/cCWJYC4/bg.jpg" alt="Upload Illustration" className="rounded-lg shadow-lg" style={{ height: "300px", clipPath: "polygon(0% 0%, 100% 0%, 100% 75%, 45% 76%, 42% 100%, 31% 75%, 0% 75%);" }}/>
-          <Image 
-          src={logo}
-          alt='logo'
-          width={150}
-          height={150}
-          className='w-56'
-          />
-          <img src="https://i.ibb.co/cCWJYC4/bg.jpg" alt="Upload Illustration" className="rounded-lg shadow-lg" style={{ height: "280px", clipPath: "polygon(56% 42%, 100% 43%, 100% 100%, 0% 100%, 0 44%, 44% 42%, 34% 0%, 0% 63%, 9% 43%);" }}/>
-        </div>
+        {/* <div></div> */}
       </div>
       <ToastContainer />
     </div>

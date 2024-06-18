@@ -1,7 +1,5 @@
-'use client';
 import React, { useState } from 'react';
 import { FaPaperPlane, FaUserCircle, FaTrashAlt } from 'react-icons/fa';
-import Modal from './Modal'; // Import your Modal component
 
 interface Comment {
   _id: string;
@@ -31,7 +29,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
 
     try {
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/api/mangas/${mangaTitle}/comments`, {
+      const apiUrl = `http://localhost:5000/api/mangas/${mangaTitle}/comments`;
+
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -40,26 +40,23 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
         body: JSON.stringify({ text: commentText }),
       });
 
+      const responseBody = await response.json();
+
       if (!response.ok) {
+        console.error('Failed to submit comment:', responseBody);
         throw new Error('Failed to submit comment');
       }
 
-      const newComment = await response.json(); // Assuming response returns the new comment
-      onCommentAdded(newComment);
-      setCommentText('');
+      onCommentAdded(responseBody); // Update local state with the new comment
+      setCommentText(''); // Clear the comment input field
     } catch (error) {
       console.error('Error submitting comment:', error);
     }
   };
 
-  const handleCommentDelete = async (commentId: string) => {
-    try {
-      // Show the modal for confirmation
-      setShowModal(true);
-      setCommentIdToDelete(commentId);
-    } catch (error) {
-      console.error('Error deleting comment:', error);
-    }
+  const handleCommentDelete = (commentId: string) => {
+    setShowModal(true);
+    setCommentIdToDelete(commentId);
   };
 
   const handleConfirmDelete = async () => {
@@ -75,10 +72,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
       });
 
       if (!response.ok) {
+        const errorResponse = await response.text(); // Get the raw response text
+        console.error('Failed to delete comment:', errorResponse);
         throw new Error('Failed to delete comment');
       }
 
       onCommentDeleted(commentIdToDelete);
+      setCommentIdToDelete('');
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
@@ -111,7 +111,7 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
       )}
       <ul className="space-y-4 bg-white dark:bg-gray-950 p-2 rounded-b-lg">
         {comments.slice().reverse().map((comment) => (
-          <li key={comment._id} className="flex items-start space-x-4 p-4 bg-white dark:bg-gray-950 rounded-2xl">
+          <li key={comment._id} className="relative flex items-start space-x-4 p-4 bg-white dark:bg-gray-950 rounded-2xl">
             {comment.user.profilePicture ? (
               <img
                 src={`http://localhost:5000/${comment.user.profilePicture}`}
@@ -123,9 +123,9 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
             )}
             <div className="flex-1">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                <p className="dark:text-gray-300 text-gray-700">
+                <div className="dark:text-gray-300 text-gray-700">
                   <h2 className="dark:text-white text-black font-bold">{comment.user.username}</h2> {comment.text}
-                </p>
+                </div>
                 <div className='md:flex flex-col justify-center items-center gap-2'>
                   <p className="dark:text-gray-500 text-gray-800 text-xs md:text-sm py-1">{new Date(comment.createdAt).toLocaleString()}</p>
                   {isSignedIn && username === comment.user.username && (
@@ -138,18 +138,31 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
                 </div>
               </div>
             </div>
+            {showModal && commentIdToDelete === comment._id && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 rounded-md z-50">
+                <div className="bg-white dark:bg-gray-800 border border-black p-6 rounded-lg shadow-lg max-w-md mx-auto">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Confirm Deletion</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this comment?</p>
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+                      onClick={handleCancelDelete}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
+                      onClick={handleConfirmDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
           </li>
         ))}
       </ul>
-
-      {/* Modal for confirmation */}
-      <Modal
-        isOpen={showModal}
-        title="Confirm Deletion"
-        message="Are you sure you want to delete this comment?"
-        onConfirm={handleConfirmDelete}
-        onCancel={handleCancelDelete}
-      />
     </div>
   );
 };
