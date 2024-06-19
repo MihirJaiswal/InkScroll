@@ -1,4 +1,4 @@
-//models/user.js
+// models/user.js
 const mongoose = require('mongoose');
 
 const UserSchema = new mongoose.Schema({
@@ -24,6 +24,14 @@ const UserSchema = new mongoose.Schema({
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Manga',
+  }],
+  followers: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  following: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
   }],
   createdAt: {
     type: Date,

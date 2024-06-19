@@ -191,3 +191,144 @@ exports.deleteComment = async (req, res) => {
     res.status(500).json({ error: 'Server error' });
   }
 };
+
+// Function to update manga details
+exports.updateManga = async (req, res) => {
+  const { title, description, genre, chapterNumber, tags, status } = req.body;
+  const { id } = req.params; // Assuming id is passed as a parameter
+
+  try {
+    let manga = await Manga.findById(id);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    // Check if the logged-in user is the author of the manga
+    if (manga.author.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
+    manga.title = title;
+    manga.description = description;
+    manga.genre = genre;
+    manga.chapterNumber = chapterNumber;
+    manga.tags = tags ? tags.split(',') : manga.tags;
+    manga.status = status || manga.status;
+
+    await manga.save();
+
+    console.log('Manga updated successfully:', manga);
+    res.json(manga);
+  } catch (err) {
+    console.error('Error updating manga:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to delete manga
+exports.deleteManga = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    // Find the manga document by ID
+    const manga = await Manga.findById(id);
+
+    // Check if manga exists
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    // Check authorization: Ensure the logged-in user is the author of the manga
+    if (manga.author.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
+    // Delete all chapters related to the manga (optional, depends on your design)
+    // await Chapter.deleteMany({ manga: manga._id });
+
+    // Remove the manga document
+    await Manga.findByIdAndDelete(id);
+
+    console.log('Manga deleted successfully');
+    return res.json({ msg: 'Manga deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting manga:', err);
+    return res.status(500).send('Server error');
+  }
+};
+
+
+
+// Function to update a chapter
+exports.updateChapter = async (req, res) => {
+  const { title, chapterNumber, subTitle, description } = req.body;
+  const { mangaId, chapterId } = req.params;
+
+  try {
+    let manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    // Check if the logged-in user is the author of the manga
+    if (manga.author.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
+    let chapter = manga.chapters.id(chapterId);
+
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    chapter.title = title;
+    chapter.chapterNumber = chapterNumber;
+    chapter.subTitle = subTitle;
+    chapter.description = description;
+
+    await manga.save();
+
+    console.log('Chapter updated successfully:', chapter);
+    res.json(chapter);
+  } catch (err) {
+    console.error('Error updating chapter:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to delete a chapter
+exports.deleteChapter = async (req, res) => {
+  const { mangaId, chapterId } = req.params;
+
+  try {
+    let manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    // Check if the logged-in user is the author of the manga
+    if (manga.author.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
+    let chapter = manga.chapters.id(chapterId);
+
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    manga.chapters.pull(chapterId); // Remove the chapter from the array
+
+    await manga.save();
+
+    console.log('Chapter deleted successfully');
+    res.json({ msg: 'Chapter deleted successfully' });
+  } catch (err) {
+    console.error('Error deleting chapter:', err);
+    res.status(500).send('Server error');
+  }
+};
+

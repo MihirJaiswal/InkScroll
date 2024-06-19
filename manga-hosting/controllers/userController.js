@@ -104,3 +104,51 @@ exports.getMangaById = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+exports.followUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const userToFollow = await User.findById(req.params.userId);
+
+    if (!user || !userToFollow) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    if (!user.following.includes(req.params.userId)) {
+      user.following.push(req.params.userId);
+      userToFollow.followers.push(req.user.id);
+      await user.save();
+      await userToFollow.save();
+    }
+
+    res.json(user.following);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
+exports.unfollowUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    const userToUnfollow = await User.findById(req.params.userId);
+
+    if (!user || !userToUnfollow) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+
+    user.following = user.following.filter(
+      (follow) => follow.toString() !== req.params.userId
+    );
+    userToUnfollow.followers = userToUnfollow.followers.filter(
+      (follower) => follower.toString() !== req.user.id
+    );
+
+    await user.save();
+    await userToUnfollow.save();
+    res.json(user.following);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

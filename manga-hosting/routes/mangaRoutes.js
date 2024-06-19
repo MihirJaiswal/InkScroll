@@ -1,6 +1,6 @@
 //routes/mangaRoutes.js
 const express = require('express');
-const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment, deleteComment } = require('../controllers/mangaController');
+const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment, deleteComment, updateManga, deleteManga, updateChapter, deleteChapter } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -111,5 +111,30 @@ router.post('/:title/comments', [authMiddleware, [
 router.delete('/:title/comments/:commentId', authMiddleware, async (req, res) => {
   deleteComment(req, res);
 });
+
+// @route PUT api/mangas/:id
+// @desc Update manga details
+// @access Private
+router.put('/:id', authMiddleware, updateManga);
+
+
+// @route DELETE api/mangas/:id
+// @desc Delete manga
+// @access Private
+router.delete('/:id', authMiddleware, deleteManga);
+
+
+// @route PUT api/mangas/:mangaId/chapters/:chapterId
+// @desc Update a chapter
+// @access Private
+router.put('/:mangaId/chapters/:chapterId', authMiddleware, updateChapter);
+
+// @route DELETE api/mangas/:mangaId/chapters/:chapterId
+// @desc Delete a chapter
+// @access Private
+router.delete('/:mangaId/chapters/:chapterId', authMiddleware, deleteChapter);
+
+
+
 
 module.exports = router;
