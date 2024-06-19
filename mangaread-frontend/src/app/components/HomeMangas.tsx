@@ -62,9 +62,9 @@ const RandomMangaList: React.FC = () => {
     centerPadding: '20px',
     responsive: [
       {
-        breakpoint: 1024,
+        breakpoint: 1380,
         settings: {
-          slidesToShow: 1.5,
+          slidesToShow: 3,
           slidesToScroll: 1,
           centerPadding: '20px',
         },

@@ -89,3 +89,18 @@ exports.removeFavorite = async (req, res) => {
     res.status(500).send('Server error');
   }
 };
+
+exports.getMangaById = async (req, res) => {
+  const { mangaId } = req.params;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+    res.json(manga);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

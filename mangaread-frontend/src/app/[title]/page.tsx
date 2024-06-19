@@ -53,17 +53,23 @@ interface User {
 
 const MangaDetail: React.FC = () => {
   const pathname = usePathname();
-  const title = pathname.split('/').pop() || ''; // Ensure title is always a string
+  const mangaId = pathname.split('/').pop() || ''; // Extract mangaId from pathname
   const [manga, setManga] = useState<Manga | null>(null);
   const [isSignedIn, setIsSignedIn] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [isFavorite, setIsFavorite] = useState(false);
   const [showFullDescription, setShowFullDescription] = useState(false);
+  const [url, setUrl] = useState('')
 
   useEffect(() => {
     const fetchManga = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/mangas/${title}`);
+        const token = localStorage.getItem('authToken');
+        const response = await fetch(`http://localhost:5000/api/mangas/${mangaId}`, {
+          headers: {
+            'x-auth-token': token || '',
+          },
+        });
         if (!response.ok) {
           throw new Error('Failed to fetch manga');
         }
@@ -74,44 +80,47 @@ const MangaDetail: React.FC = () => {
       }
     };
 
-    if (title) {
+    if (mangaId) {
       fetchManga();
     }
 
     return () => {
       setManga(null);
     };
-  }, [title]);
+  }, [mangaId]);
 
   useEffect(() => {
-    const fetchUserAndFavorites = async () => {
+    const fetchUserFavorites = async () => {
       const token = localStorage.getItem('authToken');
       if (token) {
         setIsSignedIn(true);
         try {
-          const response = await fetch('http://localhost:5000/api/users', {
+          // Fetch user favorites
+          const response = await fetch('http://localhost:5000/api/users/favorites', {
             headers: {
               'x-auth-token': token,
             },
           });
-          if (!response.ok) {
-            throw new Error('Failed to fetch user data');
-          }
-          const userData = await response.json();
-          setUser(userData);
 
-          // Check if manga is already in favorites
-          if (userData.favorites.includes(manga?._id)) {
-            setIsFavorite(true);
+          if (!response.ok) {
+            throw new Error('Failed to fetch user favorites');
           }
+
+          const favoritesData = await response.json();
+          console.log(favoritesData)
+          setUrl(favoritesData)
+          // Check if mangaId is in user's favorites
+          const isFavorited = favoritesData.some((favorite: any) => favorite.title === manga?.title);
+          setIsFavorite(isFavorited);
+
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error('Error fetching user favorites:', error);
         }
       }
     };
 
     if (manga?._id) {
-      fetchUserAndFavorites();
+      fetchUserFavorites();
     }
   }, [manga?._id]);
 
@@ -125,7 +134,7 @@ const MangaDetail: React.FC = () => {
         method,
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
       });
 
@@ -134,6 +143,7 @@ const MangaDetail: React.FC = () => {
       }
 
       setIsFavorite(!isFavorite);
+
     } catch (error) {
       console.error('Error updating favorites:', error);
     }
@@ -190,6 +200,10 @@ const MangaDetail: React.FC = () => {
       },
     ],
   };
+  console.log(isFavorite)
+  console.log('url is', url)
+  const m =  console.log(manga)
+
 
   return (
     <div>
@@ -278,7 +292,7 @@ const MangaDetail: React.FC = () => {
             <div>
               <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
               <CommentSection
-                mangaTitle={title}
+                mangaTitle={manga.title}
                 comments={manga.comments}
                 isSignedIn={isSignedIn}
                 onCommentAdded={handleCommentAdded}

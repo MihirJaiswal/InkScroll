@@ -1,6 +1,6 @@
 //routes/userRoutes.js
 const express = require('express');
-const { updateProfile, getProfile, addFavorite, removeFavorite, getUserFavorites } = require('../controllers/userController');
+const { updateProfile, getProfile, addFavorite, removeFavorite, getUserFavorites, getMangaById } = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -59,5 +59,7 @@ router.post('/favorites/:mangaId', authMiddleware, addFavorite);
 // @desc    Remove manga from favorites
 // @access  Private
 router.delete('/favorites/:mangaId', authMiddleware, removeFavorite);
+
+router.get('/mangas/:mangaId', authMiddleware, getMangaById);
 
 module.exports = router;
