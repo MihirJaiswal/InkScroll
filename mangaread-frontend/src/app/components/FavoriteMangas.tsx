@@ -115,7 +115,7 @@ const FavoriteMangas: React.FC = () => {
           {filteredFavorites.map((manga) => (
             <div key={manga._id} className="flex flex-col justify-center items-center rounded-lg p-4 mt-4 mb-8 bg-white dark:bg-gray-400 bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-40 dark:bg-opacity-10 border dark:border-gray-100 border-black shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 cursor-pointer">
               <Link href={`/manga/${manga.title}`}>
-                <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="w-48 h-auto rounded-lg object-contain mb-4" />
+                <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="w-56 h-48 rounded-lg object-cover mb-4" />
               </Link>
               <h2 className="text-xl font-semibold text-black dark:text-gray-100 mb-2">{manga.title}</h2>
               <p className="text-gray-900 dark:text-gray-300 mb-2"><FaStar className="inline mr-1" /> {manga.rating}/5</p>
