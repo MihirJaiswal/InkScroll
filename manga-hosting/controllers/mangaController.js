@@ -1,4 +1,3 @@
-//controllers/mangaController.js
 const Manga = require('../models/Manga');
 const fs = require('fs');
 const axios = require('axios'); // Assuming you'll use axios for API requests
@@ -78,12 +77,18 @@ exports.getMangaByTitle = async (req, res) => {
 
 // Function to add a new chapter
 exports.addChapter = async (req, res) => {
-  const { title, chapterNumber } = req.body;
-  const pdfFile = req.file;
+  const { title, chapterNumber, subTitle, description } = req.body;
+  const pdfFile = req.files['pdf'] ? req.files['pdf'][0] : null;
+  const coverImageFile = req.files['coverImage'] ? req.files['coverImage'][0] : null;
 
   if (!pdfFile) {
     console.error('No PDF file uploaded');
     return res.status(400).json({ msg: 'No PDF file uploaded' });
+  }
+
+  if (!coverImageFile) {
+    console.error('No cover image uploaded');
+    return res.status(400).json({ msg: 'No cover image uploaded' });
   }
 
   try {
@@ -93,10 +98,18 @@ exports.addChapter = async (req, res) => {
       return res.status(404).json({ msg: 'Manga not found' });
     }
 
+    // Check if the logged-in user is the author of the manga
+    if (manga.author.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'User not authorized' });
+    }
+
     manga.chapters.push({
       chapterNumber,
       title,
+      subTitle,
+      description,
       pdf: pdfFile.path,
+      coverImage: coverImageFile.path,
     });
 
     await manga.save();
@@ -145,7 +158,7 @@ exports.addComment = async (req, res) => {
   }
 };
 
-//delete commet
+// Function to delete a comment
 exports.deleteComment = async (req, res) => {
   const title = req.params.title;
   const commentId = req.params.commentId;

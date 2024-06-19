@@ -6,12 +6,16 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import CommentSection from '../components/CommentSection';
 import { FaUserCircle, FaTags, FaStar } from 'react-icons/fa';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 interface Chapter {
   _id: string;
   chapterNumber: number;
-  title: string;
+  subTitle: string;
   pdf: string;
+  coverImage: string;
 }
 
 interface Comment {
@@ -61,10 +65,9 @@ const MangaDetail: React.FC = () => {
         const response = await fetch(`http://localhost:5000/api/mangas/${title}`);
         if (!response.ok) {
           throw new Error('Failed to fetch manga');
-        } else {
-          const data = await response.json();
-          setManga(data);
         }
+        const data = await response.json();
+        setManga(data);
       } catch (error) {
         console.error('Error fetching manga:', error);
       }
@@ -80,10 +83,10 @@ const MangaDetail: React.FC = () => {
   }, [title]);
 
   useEffect(() => {
-    const token = localStorage.getItem('authToken');
-    if (token) {
-      setIsSignedIn(true);
-      const fetchUser = async () => {
+    const fetchUser = async () => {
+      const token = localStorage.getItem('authToken');
+      if (token) {
+        setIsSignedIn(true);
         try {
           const response = await fetch('http://localhost:5000/api/users', {
             headers: {
@@ -95,7 +98,7 @@ const MangaDetail: React.FC = () => {
           }
           const userData = await response.json();
           setUser(userData);
-          console.log('user us', userData);
+
           // Check if manga is already in favorites
           const favResponse = await fetch('http://localhost:5000/api/user/favorites', {
             headers: {
@@ -109,9 +112,10 @@ const MangaDetail: React.FC = () => {
         } catch (error) {
           console.error('Error fetching user data:', error);
         }
-      };
-      fetchUser();
-    }
+      }
+    };
+
+    fetchUser();
   }, [manga?._id]);
 
   const handleFavoriteToggle = async () => {
@@ -134,7 +138,6 @@ const MangaDetail: React.FC = () => {
       }
 
       setIsFavorite(!isFavorite);
-      console.log(`Manga ${isFavorite ? 'removed from' : 'added to'} favorites`);
     } catch (error) {
       console.error('Error updating favorites:', error);
     }
@@ -154,26 +157,55 @@ const MangaDetail: React.FC = () => {
 
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 
-  console.log('comments', manga.comments);
-  console.log(user);
-  console.log(isSignedIn);
-  console.log(manga.title);
-  console.log('username is', user?.username);
+  const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 4,
+    slidesToScroll: manga.chapters.length,
+    centerMode: false,
+    centerPadding: '20px',
+    responsive: [
+      {
+        breakpoint: 1024,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerPadding: '20px',
+        },
+      },
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerPadding: '10px',
+        },
+      },
+      {
+        breakpoint: 480,
+        settings: {
+          dots: true,
+          slidesToShow: 1.5,
+          slidesToScroll: 1,
+          centerMode: true,
+          centerPadding: '0px',
+        },
+      },
+    ],
+  };
 
   return (
     <div>
       <Navbar />
       <div className="container mx-auto px-4 h-full mt-4">
         <div className="py-8">
-          
           <div className="flex flex-col md:flex-row justify-center items-center my-4 md:mr-24">
-            
             <div className='md:w-full flex justify-center'>
               <img src={`http://localhost:5000/${manga.coverImage}`} alt={manga.title} className="md:w-72 w-48 h-auto rounded-lg m-4 object-contain border border-black" />
             </div>
-            
             <div className='flex flex-col gap-4 md:w-full'>
-            <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-gray-100 my-4 text-center">{manga.title}</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-gray-100 my-4 text-center">{manga.title}</h1>
               <div className='flex flex-col justify-center items-center gap-4'>
                 {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
                 <p className={`dark:text-white text-black md:font-medium m-2 px-4 text-xl text-justify ${showFullDescription ? '' : 'line-clamp-2'}`}>
@@ -214,49 +246,44 @@ const MangaDetail: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="flex flex-col justify-center items-center w-full">
-            {manga.chapters.length > 0 && (
-              <>
-                <h2 className="text-2xl font-bold text-gray-200 my-8">Chapters</h2>
-                <ul>
-                  {manga.chapters.map((chapter) => (
-                    <li key={chapter._id} className="mb-6 p-4 rounded-2xl bg-gray-900 shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-50 border border-gray-500">
-                      <Link href={`/${chapter.title}`}>
-                        <div className="block">
-                          <div className="flex flex-col items-center text-center">
-                            <img
-                              src={`http://localhost:5000/${manga.coverImage}`}
-                              alt={`Chapter ${chapter.chapterNumber}`}
-                              className="w-auto h-48 object-cover rounded-lg mb-4" 
-                            />
-                            <p className="text-gray-300 text-lg font-semibold">
-                              <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.title}
-                            </p>
-                            <div className="flex items-center justify-center mt-4">
-                              <button className="bg-blue-500 text-white px-6 py-3 rounded-lg hover:bg-blue-600 transition duration-300">
-                                <p className="hover:underline">Read Chapter</p>
-                              </button>
-                            </div>
-                          </div>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 my-12 text-center">Chapters</h2>
+          <Slider {...settings}>
+            {manga.chapters.map((chapter) => (
+              <div key={chapter._id} className="flex flex-col justify-center items-center w-full">
+                <li className="mb-6 p-2 md:p-4 mx-4 rounded-2xl bg-gray-500 dark:bg-bgmain dark:shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-800 dark:border-gray-500">
+                  <Link href={`/${chapter.subTitle}`}>
+                    <div className="block">
+                      <div className="flex flex-col items-center text-center">
+                        <img
+                          src={`http://localhost:5000/${chapter.coverImage}`}
+                          alt={`Chapter ${chapter.chapterNumber}`}
+                          className="md:w-56 md:h-48 w-44 h-36 object-cover border border-black rounded-lg mb-4" 
+                        />
+                        <p className="text-gray-900 dark:text-gray-300 text-lg font-semibold">
+                          <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.subTitle}
+                        </p>
+                        <div className="flex items-center justify-center mt-4">
+                          <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
+                            <p className="hover:underline">Read Chapter</p>
+                          </button>
                         </div>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </>
-            )}
-          </div>
-          
+                      </div>
+                    </div>
+                  </Link>
+                </li>
+              </div>
+            ))}
+          </Slider>
           {isSignedIn && (
             <div>
               <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
               <CommentSection
-              mangaTitle={title}
-              comments={manga.comments}
-              isSignedIn={isSignedIn}
-              onCommentAdded={handleCommentAdded}
-              onCommentDeleted={handleCommentDeleted}
-            />
+                mangaTitle={title}
+                comments={manga.comments}
+                isSignedIn={isSignedIn}
+                onCommentAdded={handleCommentAdded}
+                onCommentDeleted={handleCommentDeleted}
+              />
             </div>
           )}
         </div>

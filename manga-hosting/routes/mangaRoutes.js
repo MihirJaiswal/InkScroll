@@ -91,8 +91,11 @@ router.get('/api/mangas/:title', async (req, res) => {
 // @route   POST api/mangas/add-chapter
 // @desc    Add a new chapter
 // @access  Private
-const uploadSinglePdf = upload.single('pdf');
-router.post('/add-chapter', authMiddleware, uploadSinglePdf, addChapter);
+const uploadChapterFiles = upload.fields([
+  { name: 'pdf', maxCount: 1 },
+  { name: 'coverImage', maxCount: 1 },
+]);
+router.post('/add-chapter', authMiddleware, uploadChapterFiles, addChapter);
 
 //comments
 router.post('/:title/comments', [authMiddleware, [

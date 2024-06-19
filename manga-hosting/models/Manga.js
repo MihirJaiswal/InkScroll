@@ -1,4 +1,3 @@
-//models/Manga.js
 const mongoose = require('mongoose');
 
 const CommentSchema = new mongoose.Schema({
@@ -21,12 +20,23 @@ const ChapterSchema = new mongoose.Schema({
   chapterNumber: {
     type: Number,
     required: true,
+    unique: true,
   },
   title: {
     type: String,
   },
+  subTitle: {
+    type: String,
+  },
+  description:{
+    type: String,
+  },
   pdf: {
     type: String,
+    required: true,
+  },
+  coverImage: {
+    type: String, // Assuming the cover image is stored as a URL
     required: true,
   },
   createdAt: {
@@ -39,6 +49,7 @@ const MangaSchema = new mongoose.Schema({
   title: {
     type: String,
     required: true,
+    unique: true, // Added unique constraint
   },
   description: {
     type: String,
@@ -50,7 +61,7 @@ const MangaSchema = new mongoose.Schema({
   },
   pdf: {
     type: String,
-    required:true,
+    required: true,
   },
   coverImage: {
     type: String, // Assuming the cover image is stored as a URL
