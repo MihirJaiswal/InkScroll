@@ -39,6 +39,19 @@ exports.getProfile = async (req, res) => {
   }
 };
 
+exports.getUserFavorites = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).populate('favorites');
+    if (!user) {
+      return res.status(404).json({ msg: 'User not found' });
+    }
+    res.json(user.favorites);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};
+
 exports.addFavorite = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);

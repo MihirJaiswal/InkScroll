@@ -1,6 +1,6 @@
 //routes/userRoutes.js
 const express = require('express');
-const { updateProfile, getProfile, addFavorite, removeFavorite } = require('../controllers/userController');
+const { updateProfile, getProfile, addFavorite, removeFavorite, getUserFavorites } = require('../controllers/userController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -49,6 +49,7 @@ router.put('/profile', authMiddleware, uploadSingleImage, updateProfile);
 // @access  Private
 router.get('/profile', authMiddleware, getProfile);
 
+router.get('/favorites', authMiddleware, getUserFavorites);
 // @route   POST api/users/favorites/:mangaId
 // @desc    Add manga to favorites
 // @access  Private

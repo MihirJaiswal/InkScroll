@@ -48,6 +48,7 @@ interface Manga {
 interface User {
   username: string;
   profilePicture: string;
+  favorites: string[]; // Assuming favorites contain manga IDs
 }
 
 const MangaDetail: React.FC = () => {
@@ -83,7 +84,7 @@ const MangaDetail: React.FC = () => {
   }, [title]);
 
   useEffect(() => {
-    const fetchUser = async () => {
+    const fetchUserAndFavorites = async () => {
       const token = localStorage.getItem('authToken');
       if (token) {
         setIsSignedIn(true);
@@ -100,13 +101,7 @@ const MangaDetail: React.FC = () => {
           setUser(userData);
 
           // Check if manga is already in favorites
-          const favResponse = await fetch('http://localhost:5000/api/user/favorites', {
-            headers: {
-              'x-auth-token': token,
-            },
-          });
-          const favoriteMangas = await favResponse.json();
-          if (favoriteMangas.some((favManga: Manga) => favManga._id === manga?._id)) {
+          if (userData.favorites.includes(manga?._id)) {
             setIsFavorite(true);
           }
         } catch (error) {
@@ -115,13 +110,15 @@ const MangaDetail: React.FC = () => {
       }
     };
 
-    fetchUser();
+    if (manga?._id) {
+      fetchUserAndFavorites();
+    }
   }, [manga?._id]);
 
   const handleFavoriteToggle = async () => {
     try {
       const token = localStorage.getItem('authToken');
-      const url = `http://localhost:5000/api/users/favorites`;
+      const url = `http://localhost:5000/api/users/favorites/${manga?._id}`;
       const method = isFavorite ? 'DELETE' : 'POST';
 
       const response = await fetch(url, {
@@ -130,7 +127,6 @@ const MangaDetail: React.FC = () => {
           'Content-Type': 'application/json',
           'x-auth-token': token ?? '',
         },
-        body: JSON.stringify({ mangaId: manga?._id }),
       });
 
       if (!response.ok) {
@@ -246,34 +242,38 @@ const MangaDetail: React.FC = () => {
               </div>
             </div>
           </div>
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 my-12 text-center">Chapters</h2>
-          <Slider {...settings}>
-            {manga.chapters.map((chapter) => (
-              <div key={chapter._id} className="flex flex-col justify-center items-center w-full">
-                <li className="mb-6 p-2 md:p-4 mx-4 rounded-2xl bg-gray-500 dark:bg-bgmain dark:shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-800 dark:border-gray-500">
-                  <Link href={`/${chapter.subTitle}`}>
-                    <div className="block">
-                      <div className="flex flex-col items-center text-center">
-                        <img
-                          src={`http://localhost:5000/${chapter.coverImage}`}
-                          alt={`Chapter ${chapter.chapterNumber}`}
-                          className="md:w-56 md:h-48 w-44 h-36 object-cover border border-black rounded-lg mb-4" 
-                        />
-                        <p className="text-gray-900 dark:text-gray-300 text-lg font-semibold">
-                          <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.subTitle}
-                        </p>
-                        <div className="flex items-center justify-center mt-4">
-                          <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
-                            <p className="hover:underline">Read Chapter</p>
-                          </button>
+          {manga.chapters.length > 0 && ( // Render chapters only if there are chapters available
+            <>
+              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 my-12 text-center">Chapters</h2>
+              <Slider {...settings}>
+                {manga.chapters.map((chapter) => (
+                  <div key={chapter._id} className="flex flex-col justify-center items-center w-full">
+                    <li className="mb-6 p-2 md:p-4 mx-4 rounded-2xl bg-gray-500 dark:bg-bgmain dark:shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-800 dark:border-gray-500">
+                      <Link href={`/${chapter.subTitle}`}>
+                        <div className="block">
+                          <div className="flex flex-col items-center text-center">
+                            <img
+                              src={`http://localhost:5000/${chapter.coverImage}`}
+                              alt={`Chapter ${chapter.chapterNumber}`}
+                              className="md:w-56 md:h-48 w-44 h-36 object-cover border border-black rounded-lg mb-4" 
+                            />
+                            <p className="text-gray-900 dark:text-gray-300 text-lg font-semibold">
+                              <h2 className="font-semibold text-lg m-2">Chapter {chapter.chapterNumber}:</h2> {chapter.subTitle}
+                            </p>
+                            <div className="flex items-center justify-center mt-4">
+                              <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
+                                <p className="hover:underline">Read Chapter</p>
+                              </button>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    </div>
-                  </Link>
-                </li>
-              </div>
-            ))}
-          </Slider>
+                      </Link>
+                    </li>
+                  </div>
+                ))}
+              </Slider>
+            </>
+          )}
           {isSignedIn && (
             <div>
               <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
