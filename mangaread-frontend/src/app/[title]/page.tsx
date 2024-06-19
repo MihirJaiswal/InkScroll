@@ -258,6 +258,7 @@ const MangaDetail: React.FC = () => {
           </div>
           {manga.chapters.length > 0 && ( // Render chapters only if there are chapters available
             <>
+            <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-200 my-12 text-center">Chapters</h2>
               <Slider {...settings}>
                 {manga.chapters.map((chapter) => (
