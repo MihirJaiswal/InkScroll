@@ -220,7 +220,7 @@ const MangaDetail: React.FC = () => {
               <h1 className="text-3xl md:text-4xl font-bold text-black dark:text-gray-100 my-4 text-center">{manga.title}</h1>
               <div className='flex flex-col justify-center items-center gap-4'>
                 {manga.nsfw && <p className="text-red-500 font-semibold text-center border border-solid border-red-500 w-12 rounded-l px-auto">NSFW</p>}
-                <p className={`dark:text-white text-black md:font-medium m-2 px-4 text-xl text-justify ${showFullDescription ? '' : 'line-clamp-2'}`}>
+                <p className={`dark:text-gray-300 text-gray-800 md:font-medium m-2 px-4 text-xl text-justify ${showFullDescription ? '' : 'line-clamp-2'}`}>
                   {manga.description}
                 </p>
                 {!showFullDescription && (

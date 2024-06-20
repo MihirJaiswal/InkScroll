@@ -113,7 +113,7 @@ const Navbar = () => {
                         alt="Profile"
                         width={100}
                         height={100}
-                        className="rounded-full border ml-28 border-gray-700 "
+                        className="rounded-full border ml-24 border-gray-700 "
                         style={{ borderRadius: '50%', height: '40px', width: '40px', objectFit: 'cover' }}
                       />
                     </div>
