@@ -22,7 +22,7 @@ const Hero = () => {
           <p className="text-lg md:text-2xl mb-8">Explore a vast collection of manga from various genres and authors.</p>
           <div className='flex justify-center items-center gap-4'>
             <button>
-              <a href="#manga-collection" className="inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 md:py-3 px-6 rounded-lg transition duration-300 ease-in-out border border-black">Start Reading</a>
+              <a href="/all-mangas" className="inline-block text-sm bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 md:py-3 px-6 rounded-lg transition duration-300 ease-in-out border border-black">Start Reading</a>
             </button>
             {isSignedIn ? (
               <button>
