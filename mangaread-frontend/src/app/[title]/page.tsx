@@ -9,6 +9,7 @@ import { FaUserCircle, FaTags, FaStar } from 'react-icons/fa';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
+import ShimmerEffect from '../components/Shimmer2';
 
 interface Chapter {
   _id: string;
@@ -161,7 +162,9 @@ const MangaDetail: React.FC = () => {
     );
   };
 
-  if (!manga) return <div className='h-screen'>Loading....</div>;
+  if (!manga) return <div>
+    <ShimmerEffect/>
+  </div>;
 
   const newurl = manga.pdf ? manga.pdf.replace('\\', '/').split('/').pop() : '';
 

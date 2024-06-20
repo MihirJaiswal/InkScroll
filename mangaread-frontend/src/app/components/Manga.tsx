@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaSearch } from 'react-icons/fa';
+import Shimmer from './Shimmer';
 
 interface Manga {
   _id: string;
@@ -108,7 +109,7 @@ const MangaList: React.FC = () => {
           <button
             key={genre}
             onClick={() => handleGenreClick(genre)}
-            className={`px-4 py-2 m-2 rounded-lg dark:text-white text-black border border-gray-900 ${selectedGenre === genre ? 'dark:bg-blue-600 bg-blue-400' : 'dark:bg-gray-600 bg-gray-300'} hover:dark:bg-blue-700 hover:bg-blue-400 focus:outline-none`}
+            className={`px-3 md:px-4 py-2 m-2 rounded-lg dark:text-white text-black border border-gray-900 ${selectedGenre === genre ? 'dark:bg-blue-600 bg-blue-400' : 'dark:bg-gray-600 bg-gray-300'} hover:dark:bg-blue-700 hover:bg-blue-400 focus:outline-none`}
           >
             {genre}
           </button>
@@ -117,7 +118,7 @@ const MangaList: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
         {loading ? (
           <div className="col-span-full text-center text-lg text-gray-700">
-            Loading...
+            <Shimmer count={10}/>
           </div>
         ) : (
           filteredMangas.map(({ _id, title, description, pdf, coverImage, author }) => (

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Navbar from '../../components/Navbar';
 import Footer from '../../components/Footer';
 import { FaArrowRight, FaArrowLeft, FaTrash } from 'react-icons/fa';
+import ShimmerEffect from '@/app/components/Shimmer2';
 
 interface Chapter {
   _id: string;
@@ -27,6 +28,14 @@ interface Manga {
   uploadedBy: string; // Assuming this field exists
 }
 
+const LoadingChapterDetail: React.FC = () => {
+  return (
+    <div className="container mx-auto px-4 h-full mt-4">
+      <ShimmerEffect/>
+    </div>
+  );
+};
+
 const ChapterDetail: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
@@ -34,6 +43,7 @@ const ChapterDetail: React.FC = () => {
   const [manga, setManga] = useState<Manga | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
+  const [loading, setLoading] = useState(true); // State to manage loading
 
   // Extract and decode manga title and chapter title from pathname
   const mangaTitle = decodeURIComponent(pathname.split('/')[1]);
@@ -56,6 +66,8 @@ const ChapterDetail: React.FC = () => {
 
         const currentChapter = data.chapters.find((chap: Chapter) => chap.subTitle === chapterTitle);
         setChapter(currentChapter || null);
+
+        setLoading(false); // Set loading to false once data is fetched
       } catch (error) {
         console.error('Error fetching chapter:', error);
       }
@@ -103,7 +115,9 @@ const ChapterDetail: React.FC = () => {
     }
   };
 
-  if (!chapter || !manga) return <div className='h-screen'>Loading...</div>;
+  if (loading || !chapter || !manga) {
+    return <LoadingChapterDetail />;
+  }
 
   const currentChapterIndex = manga.chapters.findIndex((chap) => chap.subTitle === chapterTitle);
   const previousChapter = currentChapterIndex > 0 ? manga.chapters[currentChapterIndex - 1] : null;
@@ -153,8 +167,8 @@ const ChapterDetail: React.FC = () => {
           {showConfirmDelete && (
             <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
               <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h2 className="text-xl font-bold mb-4">Confirm Deletion</h2>
-                <p>Are you sure you want to delete this chapter?</p>
+                <h2 className="text-xl font-bold mb-4 text-black dark:text-white">Confirm Deletion</h2>
+                <p className='text-black dark:text-gray-300'>Are you sure you want to delete this chapter?</p>
                 <div className="flex justify-end gap-4 mt-4">
                   <button
                     className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300"
@@ -235,5 +249,3 @@ const ChapterDetail: React.FC = () => {
 };
 
 export default ChapterDetail;
-
-

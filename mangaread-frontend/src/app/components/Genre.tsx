@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { FaSearch, FaSortAlphaDown, FaSortAlphaUp } from 'react-icons/fa';
+import ShimmerCard from './Shimmer';
 
 interface Manga {
   _id: string;
@@ -99,7 +100,7 @@ const GenreMangas: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 my-12">
         {loading ? (
           <div className="col-span-full text-center text-lg text-gray-700">
-            Loading...
+            <ShimmerCard count={5}/>
           </div>
         ) : (
           filteredMangas.map(({ _id, title, description, pdf, coverImage, author }) => (

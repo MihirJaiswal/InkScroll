@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import ShimmerCard from './Shimmer';
 
 const UserMangaList: React.FC = () => {
   const [mangas, setMangas] = useState<any[]>([]);
@@ -82,7 +83,9 @@ const UserMangaList: React.FC = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className='lg:px-4 mx-auto'>
+      <ShimmerCard count={5}/>
+    </div>;
   }
 
   if (error) {

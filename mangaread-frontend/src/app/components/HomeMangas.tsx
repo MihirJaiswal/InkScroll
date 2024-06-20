@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import Slider from 'react-slick';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import ShimmerCard from './Shimmer';
 
 interface Manga {
   _id: string;
@@ -96,8 +97,8 @@ const RandomMangaList: React.FC = () => {
       </div>
       <div className="my-12">
         {loading ? (
-          <div className="col-span-full text-center text-lg text-gray-700">
-            Loading...
+          <div>
+            <ShimmerCard count={5}/>
           </div>
         ) : (
           <Slider {...settings}>

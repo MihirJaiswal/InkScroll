@@ -4,6 +4,7 @@ import { useRouter } from 'next/navigation';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import UserMangaList from './MyManga';
+import Loader from './Loader';
 
 interface UserProfile {
   username: string;
@@ -83,7 +84,9 @@ const ProfilePage: React.FC = () => {
     }
   };
 
-  if (!user) return <div className='h-screen'>Loading...</div>;
+  if (!user) return <div className='h-screen'>
+    <Loader/>
+  </div>;
 
   const profileImageUrl = user.profilePicture ? `http://localhost:5000/${user.profilePicture.replace(/\\/g, '/')}` : '/default-profile.png';
 
