@@ -129,9 +129,9 @@ const ChapterDetail: React.FC = () => {
               <p className="dark:text-gray-300 text-gray-800 md:font-medium m-2 px-4 text-xl text-justify">
                 {chapter.description}
               </p>
-              <div className='flex flex-col md:flex-row justify-center items-center gap-4'>
+              <div className='flex flex-col md:flex-row justify-center gap-6'>
               <div className='flex justify-center'>
-                <Link href={`/read/${chapter.subTitle}`}>
+                <Link href={`http://localhost:5000/${chapter.pdf}`} target="_blank" rel="noopener noreferrer">
                   <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
                     <p className="hover:underline">Read Chapter</p>
                   </button>
@@ -235,3 +235,5 @@ const ChapterDetail: React.FC = () => {
 };
 
 export default ChapterDetail;
+
+
