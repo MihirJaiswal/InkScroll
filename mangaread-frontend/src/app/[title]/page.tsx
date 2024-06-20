@@ -74,6 +74,8 @@ const MangaDetail: React.FC = () => {
           throw new Error('Failed to fetch manga');
         }
         const data = await response.json();
+        // Sort the chapters by chapterNumber
+        data.chapters.sort((a:any, b:any) => a.chapterNumber - b.chapterNumber);
         setManga(data);
       } catch (error) {
         console.error('Error fetching manga:', error);
@@ -264,7 +266,7 @@ const MangaDetail: React.FC = () => {
                 {manga.chapters.map((chapter) => (
                   <div key={chapter._id} className="flex flex-col justify-center items-center w-full">
                     <li className="mb-6 p-2 md:p-4 mx-4 rounded-2xl bg-gray-500 dark:bg-bgmain dark:shadow-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-800 dark:border-gray-500">
-                      <Link href={`/${chapter.subTitle}`}>
+                      <Link href={`${manga.title}/${chapter.subTitle}`}>
                         <div className="block">
                           <div className="flex flex-col items-center text-center">
                             <img
