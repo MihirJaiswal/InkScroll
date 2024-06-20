@@ -1,4 +1,4 @@
-'use client';
+'use client'
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
@@ -14,7 +14,7 @@ interface Chapter {
   description: string;
   pdf: string;
   coverImage: string;
-  uploadedBy: string; // Assuming this field exists
+  uploadedBy: string;
 }
 
 interface Manga {
@@ -25,7 +25,7 @@ interface Manga {
     _id: string;
     username: string;
   };
-  uploadedBy: string; // Assuming this field exists
+  uploadedBy: string;
 }
 
 const LoadingChapterDetail: React.FC = () => {
@@ -43,9 +43,8 @@ const ChapterDetail: React.FC = () => {
   const [manga, setManga] = useState<Manga | null>(null);
   const [username, setUsername] = useState<string | null>(null);
   const [showConfirmDelete, setShowConfirmDelete] = useState(false);
-  const [loading, setLoading] = useState(true); // State to manage loading
+  const [loading, setLoading] = useState(true);
 
-  // Extract and decode manga title and chapter title from pathname
   const mangaTitle = decodeURIComponent(pathname.split('/')[1]);
   const chapterTitle = decodeURIComponent(pathname.split('/').pop() || '');
 
@@ -53,21 +52,16 @@ const ChapterDetail: React.FC = () => {
     const fetchChapter = async () => {
       try {
         const encodedMangaTitle = encodeURIComponent(mangaTitle);
-        
         const response = await fetch(`http://localhost:5000/api/mangas/${encodedMangaTitle}`);
         if (!response.ok) {
           throw new Error('Failed to fetch manga');
         }
         const data = await response.json();
-        console.log(data);
-
         data.chapters.sort((a: Chapter, b: Chapter) => a.chapterNumber - b.chapterNumber);
         setManga(data);
-
         const currentChapter = data.chapters.find((chap: Chapter) => chap.subTitle === chapterTitle);
         setChapter(currentChapter || null);
-
-        setLoading(false); // Set loading to false once data is fetched
+        setLoading(false);
       } catch (error) {
         console.error('Error fetching chapter:', error);
       }
@@ -92,11 +86,13 @@ const ChapterDetail: React.FC = () => {
   }, [chapterTitle, mangaTitle]);
 
   const handleDelete = async () => {
-    if (!chapter || !manga) return;
+    if (!chapter || !manga || !username) return;
 
     try {
       const token = localStorage.getItem('authToken');
-      if (!token) return;
+      if (!token || manga.author.username !== username) {
+        return; // Prevent deletion if user does not match the author
+      }
 
       const response = await fetch(`http://localhost:5000/api/mangas/${manga._id}/chapters/${chapter._id}`, {
         method: 'DELETE',
@@ -144,23 +140,23 @@ const ChapterDetail: React.FC = () => {
                 {chapter.description}
               </p>
               <div className='flex flex-col md:flex-row justify-center gap-6'>
-              <div className='flex justify-center'>
-                <Link href={`http://localhost:5000/${chapter.pdf}`} target="_blank" rel="noopener noreferrer">
-                  <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
-                    <p className="hover:underline">Read Chapter</p>
-                  </button>
-                </Link>
-              </div>
-              {username && (manga.author.username === username) && (
                 <div className='flex justify-center'>
-                  <button
-                    className="bg-red-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-red-600 transition duration-300 mb-2 flex items-center"
-                    onClick={() => setShowConfirmDelete(true)}
-                  >
-                    <FaTrash className="mr-2" /> Delete Chapter
-                  </button>
+                  <Link href={`http://localhost:5000/${chapter.pdf}`} target="_blank" rel="noopener noreferrer">
+                    <button className="bg-blue-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-blue-600 transition duration-300 mb-2">
+                      <p className="hover:underline">Read Chapter</p>
+                    </button>
+                  </Link>
                 </div>
-              )}
+                {username === manga.author.username && (
+                  <div className='flex justify-center'>
+                    <button
+                      className="bg-red-500 text-white md:px-6 px-2 py-2 md:py-3 border border-gray-700 rounded-lg hover:bg-red-600 transition duration-300 mb-2 flex items-center"
+                      onClick={() => setShowConfirmDelete(true)}
+                    >
+                      <FaTrash className="mr-2" /> Delete Chapter
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
