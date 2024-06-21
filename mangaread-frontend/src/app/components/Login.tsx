@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png'
+import logo from '../../../public/logo.png'
 import Image from 'next/image';
 
 const Login = () => {
@@ -39,15 +39,15 @@ const Login = () => {
     <div className="flex">
       <div className="flex-1 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-cover bg-center opacity-20 h-full -z-30" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')`}}></div>
-        <div className="relative max-w-md w-full mx-auto p-8 md:p-16 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-100">
+        <div className="relative max-w-md w-full mx-auto p-8 md:p-10 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-100">
           <div className="flex flex-col items-center justify-center mb-8">
             <Image 
             src={logo}
              alt="Logo" 
              width={100}
              height={100}
-             className="mr-2 w-16 mb-4" /> {/* Adjust the width and height as needed */}
-            <h1 className="text-2xl font-bold text-white">Manga Sphere</h1>
+             className="w-24 mb-4" /> {/* Adjust the width and height as needed */}
+            <h1 className="text-2xl font-bold text-white font-sans">InkScroll</h1>
           </div>
           <form onSubmit={handleSubmit}>
             <div className="mb-4">

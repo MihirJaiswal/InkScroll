@@ -64,8 +64,8 @@ const Navbar = () => {
               height={50}
               className="w-12"
             />
-            <span className="text-lg font-semibold text-black dark:text-white hidden md:block ml-2">
-              Manga Sphere
+            <span className="text-2xl font-bold text-black dark:text-white hidden md:block ml-2 font-sans">
+            InkScroll
             </span>
           </Link>
           <div className='border md:hidden border-gray-900 rounded-lg'>
