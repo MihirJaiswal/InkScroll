@@ -62,7 +62,7 @@ const Navbar = () => {
               alt="Logo"
               width={50}
               height={50}
-              className="w-12"
+              className="w-10 md:w-12 border border-white rounded-full py-1 dark:bg-gray-900 bg-logo"
             />
             <span className="text-2xl font-bold text-black dark:text-white hidden md:block ml-2 font-sans">
             InkScroll

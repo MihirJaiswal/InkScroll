@@ -1,5 +1,33 @@
 const mongoose = require('mongoose');
 
+const ReplySchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  text: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  dislikes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  isSpoiler: {
+    type: Boolean,
+    default: false,
+  }
+});
+
 const CommentSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
@@ -14,6 +42,19 @@ const CommentSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  likes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  dislikes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  }],
+  replies: [ReplySchema],
+  isSpoiler: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 const ChapterSchema = new mongoose.Schema({
@@ -28,7 +69,7 @@ const ChapterSchema = new mongoose.Schema({
   subTitle: {
     type: String,
   },
-  description:{
+  description: {
     type: String,
   },
   pdf: {
@@ -43,6 +84,7 @@ const ChapterSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  comments: [CommentSchema],
 });
 
 const MangaSchema = new mongoose.Schema({

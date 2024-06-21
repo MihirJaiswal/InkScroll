@@ -1,6 +1,7 @@
 //routes/mangaRoutes.js
 const express = require('express');
-const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment, deleteComment, updateManga, deleteManga, updateChapter, deleteChapter } = require('../controllers/mangaController');
+const { uploadManga, getMangas, getMangaByTitle, addChapter, addComment, deleteComment, updateManga, deleteManga, updateChapter, deleteChapter, addChapterComment, 
+  addCommentReply, likeComment, dislikeComment, getChapterComments } = require('../controllers/mangaController');
 const authMiddleware = require('../middlewares/authMiddleware');
 const multer = require('multer');
 const path = require('path');
@@ -112,6 +113,9 @@ router.delete('/:title/comments/:commentId', authMiddleware, async (req, res) =>
   deleteComment(req, res);
 });
 
+
+
+
 // @route PUT api/mangas/:id
 // @desc Update manga details
 // @access Private
@@ -135,6 +139,49 @@ router.put('/:mangaId/chapters/:chapterId', authMiddleware, updateChapter);
 router.delete('/:mangaId/chapters/:chapterId', authMiddleware, deleteChapter);
 
 
+// Add new routes for comment functionalities
 
+// @route POST api/mangas/:mangaId/chapters/:chapterId/comments
+// @desc Add a comment to a chapter
+// @access Private
+router.post('/:mangaId/chapters/:chapterId/comments', [
+  authMiddleware,
+  check('text', 'Text is required').not().isEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  addChapterComment(req, res);
+});
+
+// @route POST api/mangas/:mangaId/chapters/:chapterId/comments/:commentId/replies
+// @desc Add a reply to a comment
+// @access Private
+router.post('/:mangaId/chapters/:chapterId/comments/:commentId/replies', [
+  authMiddleware,
+  check('text', 'Text is required').not().isEmpty()
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+  addCommentReply(req, res);
+});
+
+// @route PUT api/mangas/:mangaId/chapters/:chapterId/comments/:commentId/like
+// @desc Like a comment
+// @access Private
+router.put('/:mangaId/chapters/:chapterId/comments/:commentId/like', authMiddleware, likeComment);
+
+// @route PUT api/mangas/:mangaId/chapters/:chapterId/comments/:commentId/dislike
+// @desc Dislike a comment
+// @access Private
+router.put('/:mangaId/chapters/:chapterId/comments/:commentId/dislike', authMiddleware, dislikeComment);
+
+// @route GET api/mangas/:mangaId/chapters/:chapterId/comments
+// @desc Get comments with pagination
+// @access Public
+router.get('/:mangaId/chapters/:chapterId/comments', getChapterComments);
 
 module.exports = router;

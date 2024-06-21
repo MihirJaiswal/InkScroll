@@ -192,6 +192,174 @@ exports.deleteComment = async (req, res) => {
   }
 };
 
+
+exports.addChapterComment = async (req, res) => {
+  const { mangaId, chapterId } = req.params;
+  const { text, isSpoiler } = req.body;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    const newComment = {
+      user: req.user.id,
+      text,
+      isSpoiler: isSpoiler || false,
+    };
+
+    chapter.comments.push(newComment);
+    await manga.save();
+
+    res.status(201).json(chapter.comments);
+  } catch (err) {
+    console.error('Error adding comment:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to add a reply to a comment
+exports.addCommentReply = async (req, res) => {
+  const { mangaId, chapterId, commentId } = req.params;
+  const { text, isSpoiler } = req.body;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    const comment = chapter.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    const newReply = {
+      user: req.user.id,
+      text,
+      isSpoiler: isSpoiler || false,
+    };
+
+    comment.replies.push(newReply);
+    await manga.save();
+
+    res.status(201).json(comment.replies);
+  } catch (err) {
+    console.error('Error adding reply:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to like a comment
+exports.likeComment = async (req, res) => {
+  const { mangaId, chapterId, commentId } = req.params;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    const comment = chapter.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    if (comment.likes.includes(req.user.id)) {
+      return res.status(400).json({ msg: 'Comment already liked' });
+    }
+
+    comment.likes.push(req.user.id);
+    await manga.save();
+
+    res.json(comment.likes);
+  } catch (err) {
+    console.error('Error liking comment:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to dislike a comment
+exports.dislikeComment = async (req, res) => {
+  const { mangaId, chapterId, commentId } = req.params;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    const comment = chapter.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ msg: 'Comment not found' });
+    }
+
+    if (comment.dislikes.includes(req.user.id)) {
+      return res.status(400).json({ msg: 'Comment already disliked' });
+    }
+
+    comment.dislikes.push(req.user.id);
+    await manga.save();
+
+    res.json(comment.dislikes);
+  } catch (err) {
+    console.error('Error disliking comment:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+// Function to get comments with pagination
+exports.getChapterComments = async (req, res) => {
+  const { mangaId, chapterId } = req.params;
+  const { page = 1, limit = 10 } = req.query; // Default to page 1, limit 10
+
+  try {
+    const manga = await Manga.findById(mangaId);
+
+    if (!manga) {
+      return res.status(404).json({ msg: 'Manga not found' });
+    }
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) {
+      return res.status(404).json({ msg: 'Chapter not found' });
+    }
+
+    const comments = chapter.comments.slice((page - 1) * limit, page * limit);
+
+    res.json(comments);
+  } catch (err) {
+    console.error('Error getting comments:', err);
+    res.status(500).send('Server error');
+  }
+};
+
+
 // Function to update manga details
 exports.updateManga = async (req, res) => {
   const { title, description, genre, chapterNumber, tags, status } = req.body;
