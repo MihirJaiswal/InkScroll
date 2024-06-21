@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import { FaUserCircle } from 'react-icons/fa';
-import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png';
+import logo from '../../../public/logo.png';
 import { ModeToggle } from './Toggle';
 
 const Navbar = () => {
@@ -62,7 +62,7 @@ const Navbar = () => {
               alt="Logo"
               width={50}
               height={50}
-              className="w-10"
+              className="w-12"
             />
             <span className="text-lg font-semibold text-black dark:text-white hidden md:block ml-2">
               Manga Sphere
