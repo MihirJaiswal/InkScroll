@@ -111,58 +111,62 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
         </div>
       )}
       <ul className="space-y-4 bg-white dark:bg-gray-950 p-2 rounded-b-lg">
-        {comments.slice().reverse().map((comment) => (
-          <li key={comment._id} className="relative flex items-start space-x-4 p-4 bg-white dark:bg-gray-950 rounded-2xl">
-            {comment.user.profilePicture ? (
-              <img
-                src={`http://localhost:5000/${comment.user.profilePicture}`}
-                alt={comment.user.username}
-                className="w-10 h-10 rounded-full border border-black"
-              />
-            ) : (
-              <FaUserCircle className="text-gray-500 w-10 h-10" />
-            )}
-            <div className="flex-1">
-              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
-                <div className="dark:text-gray-300 text-gray-700">
-                  <h2 className="dark:text-white text-black font-bold">{comment.user.username}</h2> {comment.text}
-                </div>
-                <div className='md:flex flex-col justify-center items-center gap-2'>
-                  <p className="dark:text-gray-500 text-gray-800 text-xs md:text-sm py-1">{new Date(comment.createdAt).toLocaleString()}</p>
-                  {isSignedIn && username === comment.user.username && (
-                    <FaTrashAlt
-                      className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
-                      size={16}
-                      onClick={() => handleCommentDelete(comment._id)}
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
-            {showModal && commentIdToDelete === comment._id && (
-              <div className="absolute inset-0 flex items-center justify-center md:bg-black md:bg-opacity-30 rounded-md z-50">
-                <div className="bg-white dark:bg-gray-800 border border-black p-6 rounded-lg shadow-lg max-w-md mx-auto mr-4 md:mr-0">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Confirm Deletion</h3>
-                  <p className="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this comment?</p>
-                  <div className="flex justify-end space-x-4">
-                    <button
-                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
-                      onClick={handleCancelDelete}
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
-                      onClick={handleConfirmDelete}
-                    >
-                      Delete
-                    </button>
+        {comments.length === 0 ? (
+          <li className="text-center text-gray-600 dark:text-gray-300 py-16">No comments yet</li>
+        ) : (
+          comments.slice().reverse().map((comment) => (
+            <li key={comment._id} className="relative flex items-start space-x-4 p-4 bg-white dark:bg-gray-950 rounded-2xl">
+              {comment.user.profilePicture ? (
+                <img
+                  src={`http://localhost:5000/${comment.user.profilePicture}`}
+                  alt={comment.user.username}
+                  className="w-10 h-10 rounded-full border border-black"
+                />
+              ) : (
+                <FaUserCircle className="text-gray-500 w-10 h-10" />
+              )}
+              <div className="flex-1">
+                <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-2">
+                  <div className="dark:text-gray-300 text-gray-700">
+                    <h2 className="dark:text-white text-black font-bold">{comment.user.username}</h2> {comment.text}
+                  </div>
+                  <div className='md:flex flex-col justify-center items-center gap-2'>
+                    <p className="dark:text-gray-500 text-gray-800 text-xs md:text-sm py-1">{new Date(comment.createdAt).toLocaleString()}</p>
+                    {isSignedIn && username === comment.user.username && (
+                      <FaTrashAlt
+                        className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
+                        size={16}
+                        onClick={() => handleCommentDelete(comment._id)}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
-            )}
-          </li>
-        ))}
+              {showModal && commentIdToDelete === comment._id && (
+                <div className="absolute inset-0 flex items-center justify-center md:bg-black md:bg-opacity-30 rounded-md z-50">
+                  <div className="bg-white dark:bg-gray-800 border border-black p-6 rounded-lg shadow-lg max-w-md mx-auto mr-4 md:mr-0">
+                    <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Confirm Deletion</h3>
+                    <p className="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this comment?</p>
+                    <div className="flex justify-end space-x-4">
+                      <button
+                        className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+                        onClick={handleCancelDelete}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
+                        onClick={handleConfirmDelete}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </li>
+          ))
+        )}
       </ul>
     </div>
   );
