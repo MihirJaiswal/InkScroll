@@ -84,7 +84,7 @@ const GenreMangas: React.FC = () => {
               value={searchQuery}
               onChange={handleSearch}
               placeholder="Search mangas..."
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-gray-800 dark:text-white"
             />
             <FaSearch className="absolute top-2 left-3 text-gray-400" />
           </div>

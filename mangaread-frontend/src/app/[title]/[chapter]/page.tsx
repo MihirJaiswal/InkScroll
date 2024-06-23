@@ -28,13 +28,34 @@ interface Manga {
   uploadedBy: string;
 }
 
-const LoadingChapterDetail: React.FC = () => {
-  return (
-    <div className="container mx-auto px-4 h-full mt-4">
-      <ShimmerEffect/>
+const LoadingChapterDetail: React.FC = () => (
+  <div>
+    <ShimmerEffect />
+  </div>
+);
+
+const ConfirmDeleteModal: React.FC<{ onCancel: () => void; onConfirm: () => void }> = ({ onCancel, onConfirm }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+    <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 className="text-xl font-bold mb-4 text-black dark:text-white">Confirm Deletion</h2>
+      <p className='text-black dark:text-gray-300'>Are you sure you want to delete this chapter?</p>
+      <div className="flex justify-end gap-4 mt-4">
+        <button
+          className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300"
+          onClick={onCancel}
+        >
+          Cancel
+        </button>
+        <button
+          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+          onClick={onConfirm}
+        >
+          Delete
+        </button>
+      </div>
     </div>
-  );
-};
+  </div>
+);
 
 const ChapterDetail: React.FC = () => {
   const pathname = usePathname();
@@ -61,9 +82,10 @@ const ChapterDetail: React.FC = () => {
         setManga(data);
         const currentChapter = data.chapters.find((chap: Chapter) => chap.subTitle === chapterTitle);
         setChapter(currentChapter || null);
-        setLoading(false);
       } catch (error) {
         console.error('Error fetching chapter:', error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -161,26 +183,10 @@ const ChapterDetail: React.FC = () => {
             </div>
           </div>
           {showConfirmDelete && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
-              <div className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
-                <h2 className="text-xl font-bold mb-4 text-black dark:text-white">Confirm Deletion</h2>
-                <p className='text-black dark:text-gray-300'>Are you sure you want to delete this chapter?</p>
-                <div className="flex justify-end gap-4 mt-4">
-                  <button
-                    className="bg-gray-500 text-white px-4 py-2 rounded-lg hover:bg-gray-600 transition duration-300"
-                    onClick={() => setShowConfirmDelete(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
-                    onClick={handleDelete}
-                  >
-                    Delete
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ConfirmDeleteModal
+              onCancel={() => setShowConfirmDelete(false)}
+              onConfirm={handleDelete}
+            />
           )}
           <hr className="my-12 h-0.5 border-t-0 bg-neutral-200 opacity-40 dark:bg-white/10" />
           <div className='flex items-center justify-center mt-4 mb-8'>

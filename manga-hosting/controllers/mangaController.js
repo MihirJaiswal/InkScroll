@@ -1,27 +1,17 @@
 const Manga = require('../models/Manga');
 const fs = require('fs');
-const axios = require('axios'); // Assuming you'll use axios for API requests
 const { validationResult } = require('express-validator');
 
-// Function to upload manga
 exports.uploadManga = async (req, res) => {
   const { title, description, genre, chapterNumber, tags, status } = req.body;
   const pdfFile = req.files['pdf'] ? req.files['pdf'][0] : null;
   const coverImageFile = req.files['coverImage'] ? req.files['coverImage'][0] : null;
 
-  if (!pdfFile) {
-    console.error('No PDF file uploaded');
-    return res.status(400).json({ msg: 'No PDF file uploaded' });
-  }
-
-  if (!coverImageFile) {
-    console.error('No cover image uploaded');
-    return res.status(400).json({ msg: 'No cover image uploaded' });
+  if (!pdfFile || !coverImageFile) {
+    return res.status(400).json({ msg: 'PDF and cover image are required' });
   }
 
   try {
-    console.log('Skipping NSFW content check');
-
     const manga = new Manga({
       title,
       description,
@@ -32,76 +22,51 @@ exports.uploadManga = async (req, res) => {
       chapterNumber,
       tags: tags ? tags.split(',') : [],
       status: status || 'ongoing',
-      nsfw: false, // Temporarily setting this to false
+      nsfw: false,
     });
 
     await manga.save();
-    console.log('Manga saved successfully:', manga);
     res.json(manga);
   } catch (err) {
-    console.error('Error during upload process:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to get all mangas
 exports.getMangas = async (req, res) => {
   try {
-    const mangas = await Manga.find()
-      .populate('author', ['username'])
-      .populate('comments.user', 'username profilePicture');
+    const mangas = await Manga.find().populate('author', ['username']).populate('comments.user', 'username profilePicture');
     res.json(mangas);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server error');
   }
 };
 
-// Function to get manga by title
 exports.getMangaByTitle = async (req, res) => {
-  const title = req.params.title;
-
   try {
-    const manga = await Manga.findOne({ title })
+    const manga = await Manga.findOne({ title: req.params.title })
       .populate('author', ['username'])
       .populate('comments.user', 'username profilePicture');
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
     res.json(manga);
   } catch (err) {
-    console.error(err.message);
     res.status(500).send('Server error');
   }
 };
 
-// Function to add a new chapter
 exports.addChapter = async (req, res) => {
   const { title, chapterNumber, subTitle, description } = req.body;
   const pdfFile = req.files['pdf'] ? req.files['pdf'][0] : null;
   const coverImageFile = req.files['coverImage'] ? req.files['coverImage'][0] : null;
 
-  if (!pdfFile) {
-    console.error('No PDF file uploaded');
-    return res.status(400).json({ msg: 'No PDF file uploaded' });
-  }
-
-  if (!coverImageFile) {
-    console.error('No cover image uploaded');
-    return res.status(400).json({ msg: 'No cover image uploaded' });
+  if (!pdfFile || !coverImageFile) {
+    return res.status(400).json({ msg: 'PDF and cover image are required' });
   }
 
   try {
     const manga = await Manga.findOne({ title });
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
-
-    // Check if the logged-in user is the author of the manga
-    if (manga.author.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'User not authorized' });
-    }
+    if (manga.author.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
 
     manga.chapters.push({
       chapterNumber,
@@ -113,390 +78,262 @@ exports.addChapter = async (req, res) => {
     });
 
     await manga.save();
-    console.log('Chapter added successfully:', manga);
     res.json(manga);
   } catch (err) {
-    console.error('Error adding chapter:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to add comments
 exports.addComment = async (req, res) => {
-  const title = req.params.title;
   const { text } = req.body;
+  const title = req.params.title;
 
-  // Validate request body
   const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
+  if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
   try {
     const manga = await Manga.findOne({ title });
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    const newComment = {
-      user: req.user.id,
-      text,
-    };
-
+    const newComment = { user: req.user.id, text };
     manga.comments.push(newComment);
     await manga.save();
 
-    // Populate the newly added comment's user field
     const populatedManga = await Manga.findOne({ title }).populate('comments.user', 'username profilePicture');
-    const addedComment = populatedManga.comments.find(comment => comment.text === newComment.text && comment.user.equals(req.user.id));
+    const addedComment = populatedManga.comments.find(comment => comment.text === text && comment.user.equals(req.user.id));
 
-    console.log('Added Comment:', addedComment);
     res.status(201).json(addedComment);
   } catch (err) {
-    console.error('Error adding comment:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to delete a comment
 exports.deleteComment = async (req, res) => {
-  const title = req.params.title;
-  const commentId = req.params.commentId;
+  const { title, commentId } = req.params;
 
   try {
     const manga = await Manga.findOne({ title });
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    // Find the comment to delete
     const comment = manga.comments.id(commentId);
-    if (!comment) {
-      return res.status(404).json({ msg: 'Comment not found' });
-    }
+    if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
-    // Check if the comment belongs to the authenticated user
-    if (comment.user.toString() !== req.user.id) {
-      return res.status(401).json({ msg: 'User not authorized' });
-    }
+    if (comment.user.toString() !== req.user.id) return res.status(401).json({ msg: 'User not authorized' });
 
-    // Remove the comment
     manga.comments.pull(commentId);
     await manga.save();
 
     res.json({ msg: 'Comment deleted' });
-
   } catch (err) {
-    console.error('Error deleting comment:', err);
-    res.status(500).json({ error: 'Server error' });
+    res.status(500).send('Server error');
   }
 };
 
-
 exports.addChapterComment = async (req, res) => {
   const { mangaId, chapterId } = req.params;
-  const { text, isSpoiler } = req.body;
+  const { text } = req.body;
 
   try {
     const manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
     const chapter = manga.chapters.id(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
-    const newComment = {
-      user: req.user.id,
-      text,
-      isSpoiler: isSpoiler || false,
-    };
-
+    const newComment = { user: req.user.id, text };
     chapter.comments.push(newComment);
     await manga.save();
 
     res.status(201).json(chapter.comments);
   } catch (err) {
-    console.error('Error adding comment:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to add a reply to a comment
 exports.addCommentReply = async (req, res) => {
   const { mangaId, chapterId, commentId } = req.params;
-  const { text, isSpoiler } = req.body;
+  const { text } = req.body;
 
   try {
     const manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
     const chapter = manga.chapters.id(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
     const comment = chapter.comments.id(commentId);
-    if (!comment) {
-      return res.status(404).json({ msg: 'Comment not found' });
-    }
+    if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
-    const newReply = {
-      user: req.user.id,
-      text,
-      isSpoiler: isSpoiler || false,
-    };
-
-    comment.replies.push(newReply);
+    const reply = { user: req.user.id, text };
+    comment.replies.push(reply);
     await manga.save();
 
     res.status(201).json(comment.replies);
   } catch (err) {
-    console.error('Error adding reply:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to like a comment
 exports.likeComment = async (req, res) => {
   const { mangaId, chapterId, commentId } = req.params;
 
   try {
     const manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
     const chapter = manga.chapters.id(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
     const comment = chapter.comments.id(commentId);
-    if (!comment) {
-      return res.status(404).json({ msg: 'Comment not found' });
-    }
+    if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
     if (comment.likes.includes(req.user.id)) {
-      return res.status(400).json({ msg: 'Comment already liked' });
+      comment.likes.pull(req.user.id);
+    } else {
+      comment.likes.push(req.user.id);
+      if (comment.dislikes.includes(req.user.id)) {
+        comment.dislikes.pull(req.user.id);
+      }
     }
 
-    comment.likes.push(req.user.id);
     await manga.save();
-
     res.json(comment.likes);
   } catch (err) {
-    console.error('Error liking comment:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to dislike a comment
 exports.dislikeComment = async (req, res) => {
   const { mangaId, chapterId, commentId } = req.params;
 
   try {
     const manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
     const chapter = manga.chapters.id(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
     const comment = chapter.comments.id(commentId);
-    if (!comment) {
-      return res.status(404).json({ msg: 'Comment not found' });
-    }
+    if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
     if (comment.dislikes.includes(req.user.id)) {
-      return res.status(400).json({ msg: 'Comment already disliked' });
+      comment.dislikes.pull(req.user.id);
+    } else {
+      comment.dislikes.push(req.user.id);
+      if (comment.likes.includes(req.user.id)) {
+        comment.likes.pull(req.user.id);
+      }
     }
 
-    comment.dislikes.push(req.user.id);
     await manga.save();
-
     res.json(comment.dislikes);
   } catch (err) {
-    console.error('Error disliking comment:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to get comments with pagination
 exports.getChapterComments = async (req, res) => {
   const { mangaId, chapterId } = req.params;
-  const { page = 1, limit = 10 } = req.query; // Default to page 1, limit 10
 
   try {
     const manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
     const chapter = manga.chapters.id(chapterId);
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
-    const comments = chapter.comments.slice((page - 1) * limit, page * limit);
+    const populatedChapter = await manga.populate({
+      path: `chapters.${chapter._id}.comments.user`,
+      select: 'username profilePicture',
+    }).execPopulate();
 
-    res.json(comments);
+    res.json(populatedChapter.comments);
   } catch (err) {
-    console.error('Error getting comments:', err);
     res.status(500).send('Server error');
   }
 };
 
-
-// Function to update manga details
 exports.updateManga = async (req, res) => {
-  const { title, description, genre, chapterNumber, tags, status } = req.body;
-  const { id } = req.params; // Assuming id is passed as a parameter
+  const { id } = req.params;
+  const { title, description, genre, tags, status, nsfw } = req.body;
 
   try {
-    let manga = await Manga.findById(id);
+    const manga = await Manga.findById(id);
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (manga.author.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
 
-    // Check if the logged-in user is the author of the manga
-    if (manga.author.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'User not authorized' });
-    }
-
-    manga.title = title;
-    manga.description = description;
-    manga.genre = genre;
-    manga.chapterNumber = chapterNumber;
+    manga.title = title || manga.title;
+    manga.description = description || manga.description;
+    manga.genre = genre || manga.genre;
     manga.tags = tags ? tags.split(',') : manga.tags;
     manga.status = status || manga.status;
+    manga.nsfw = nsfw !== undefined ? nsfw : manga.nsfw;
 
     await manga.save();
-
-    console.log('Manga updated successfully:', manga);
     res.json(manga);
   } catch (err) {
-    console.error('Error updating manga:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to delete manga
 exports.deleteManga = async (req, res) => {
   const { id } = req.params;
 
   try {
-    // Find the manga document by ID
     const manga = await Manga.findById(id);
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    // Check if manga exists
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    if (manga.author.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
 
-    // Check authorization: Ensure the logged-in user is the author of the manga
-    if (manga.author.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'User not authorized' });
-    }
-
-    // Delete all chapters related to the manga (optional, depends on your design)
-    // await Chapter.deleteMany({ manga: manga._id });
-
-    // Remove the manga document
-    await Manga.findByIdAndDelete(id);
-
-    console.log('Manga deleted successfully');
-    return res.json({ msg: 'Manga deleted successfully' });
+    await manga.remove();
+    res.json({ msg: 'Manga deleted' });
   } catch (err) {
-    console.error('Error deleting manga:', err);
-    return res.status(500).send('Server error');
-  }
-};
-
-
-
-// Function to update a chapter
-exports.updateChapter = async (req, res) => {
-  const { title, chapterNumber, subTitle, description } = req.body;
-  const { mangaId, chapterId } = req.params;
-
-  try {
-    let manga = await Manga.findById(mangaId);
-
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
-
-    // Check if the logged-in user is the author of the manga
-    if (manga.author.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'User not authorized' });
-    }
-
-    let chapter = manga.chapters.id(chapterId);
-
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
-
-    chapter.title = title;
-    chapter.chapterNumber = chapterNumber;
-    chapter.subTitle = subTitle;
-    chapter.description = description;
-
-    await manga.save();
-
-    console.log('Chapter updated successfully:', chapter);
-    res.json(chapter);
-  } catch (err) {
-    console.error('Error updating chapter:', err);
     res.status(500).send('Server error');
   }
 };
 
-// Function to delete a chapter
+exports.updateChapter = async (req, res) => {
+  const { mangaId, chapterId } = req.params;
+  const { title, chapterNumber, subTitle, description } = req.body;
+
+  try {
+    const manga = await Manga.findById(mangaId);
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
+
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
+
+    if (manga.author.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
+
+    chapter.title = title || chapter.title;
+    chapter.chapterNumber = chapterNumber || chapter.chapterNumber;
+    chapter.subTitle = subTitle || chapter.subTitle;
+    chapter.description = description || chapter.description;
+
+    await manga.save();
+    res.json(manga);
+  } catch (err) {
+    res.status(500).send('Server error');
+  }
+};
+
 exports.deleteChapter = async (req, res) => {
   const { mangaId, chapterId } = req.params;
 
   try {
-    let manga = await Manga.findById(mangaId);
+    const manga = await Manga.findById(mangaId);
+    if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    if (!manga) {
-      return res.status(404).json({ msg: 'Manga not found' });
-    }
+    const chapter = manga.chapters.id(chapterId);
+    if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
-    // Check if the logged-in user is the author of the manga
-    if (manga.author.toString() !== req.user.id) {
-      return res.status(403).json({ msg: 'User not authorized' });
-    }
+    if (manga.author.toString() !== req.user.id) return res.status(403).json({ msg: 'User not authorized' });
 
-    let chapter = manga.chapters.id(chapterId);
-
-    if (!chapter) {
-      return res.status(404).json({ msg: 'Chapter not found' });
-    }
-
-    manga.chapters.pull(chapterId); // Remove the chapter from the array
-
+    chapter.remove();
     await manga.save();
-
-    console.log('Chapter deleted successfully');
-    res.json({ msg: 'Chapter deleted successfully' });
+    res.json({ msg: 'Chapter deleted' });
   } catch (err) {
-    console.error('Error deleting chapter:', err);
     res.status(500).send('Server error');
   }
 };
-
