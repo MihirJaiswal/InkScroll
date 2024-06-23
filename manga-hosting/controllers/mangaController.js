@@ -178,13 +178,13 @@ exports.likeComment = async (req, res) => {
   const { mangaId, chapterId, commentId } = req.params;
 
   try {
-    const manga = await Manga.findById(mangaId);
+    const manga = await Manga.findOne({ _id: mangaId });
     if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    const chapter = manga.chapters.id(chapterId);
+    const chapter = manga.chapters.find((chapter) => chapter._id.toString() === chapterId);
     if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
-    const comment = chapter.comments.id(commentId);
+    const comment = chapter.comments.find((comment) => comment._id.toString() === commentId);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
     if (comment.likes.includes(req.user.id)) {
@@ -199,21 +199,23 @@ exports.likeComment = async (req, res) => {
     await manga.save();
     res.json(comment.likes);
   } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server error');
   }
 };
+
 
 exports.dislikeComment = async (req, res) => {
   const { mangaId, chapterId, commentId } = req.params;
 
   try {
-    const manga = await Manga.findById(mangaId);
+    const manga = await Manga.findOne({ _id: mangaId });
     if (!manga) return res.status(404).json({ msg: 'Manga not found' });
 
-    const chapter = manga.chapters.id(chapterId);
+    const chapter = manga.chapters.find((chapter) => chapter._id.toString() === chapterId);
     if (!chapter) return res.status(404).json({ msg: 'Chapter not found' });
 
-    const comment = chapter.comments.id(commentId);
+    const comment = chapter.comments.find((comment) => comment._id.toString() === commentId);
     if (!comment) return res.status(404).json({ msg: 'Comment not found' });
 
     if (comment.dislikes.includes(req.user.id)) {
@@ -228,9 +230,11 @@ exports.dislikeComment = async (req, res) => {
     await manga.save();
     res.json(comment.dislikes);
   } catch (err) {
+    console.error(err.message);
     res.status(500).send('Server error');
   }
 };
+
 
 exports.getChapterComments = async (req, res) => {
   const { mangaId, chapterId } = req.params;

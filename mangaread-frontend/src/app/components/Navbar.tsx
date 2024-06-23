@@ -249,7 +249,7 @@ const Navbar = () => {
                     handleLogout();
                     toggleMobileMenu();
                   }}
-                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-4"
+                  className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-4 border border-black"
                 >
                   Logout
                 </button>
@@ -259,14 +259,14 @@ const Navbar = () => {
               <>
                 <Link
                   href="/login"
-                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2"
+                  className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2 border border-black"
                   onClick={toggleMobileMenu}
                 >
                   Login
                 </Link>
                 <Link
                   href="/signup"
-                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2"
+                  className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded transition duration-300 mt-2 border border-black"
                   onClick={toggleMobileMenu}
                 >
                   Sign Up

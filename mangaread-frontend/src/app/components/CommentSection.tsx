@@ -6,7 +6,7 @@ interface Comment {
   _id: string;
   user: {
     username: string;
-    profilePicture: string;
+    profilePicture?: string;
   };
   text: string;
   createdAt: string;
@@ -23,7 +23,13 @@ interface CommentSectionProps {
   onCommentDeleted: (commentId: string) => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, isSignedIn, onCommentAdded, onCommentDeleted }) => {
+const CommentSection: React.FC<CommentSectionProps> = ({
+  mangaTitle,
+  comments,
+  isSignedIn,
+  onCommentAdded,
+  onCommentDeleted,
+}) => {
   const [commentText, setCommentText] = useState('');
   const [replyText, setReplyText] = useState('');
   const [activeReply, setActiveReply] = useState<string | null>(null);
@@ -35,13 +41,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
 
     try {
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${mangaTitle}/comments`;
+      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
         body: JSON.stringify({ text: commentText }),
       });
@@ -65,13 +71,15 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
 
     try {
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentId}/replies`;
+      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
+        commentId
+      )}/replies`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
         body: JSON.stringify({ text: replyText }),
       });
@@ -94,12 +102,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
   const handleLikeComment = async (commentId: string) => {
     try {
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(commentId)}/like`;
+      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
+        commentId
+      )}/like`;
 
       const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
       });
 
@@ -118,12 +128,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
   const handleDislikeComment = async (commentId: string) => {
     try {
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentId}/dislike`;
+      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
+        commentId
+      )}/dislike`;
 
       const response = await fetch(apiUrl, {
         method: 'PUT',
         headers: {
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
       });
 
@@ -149,10 +161,14 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
       setShowModal(false);
 
       const token = localStorage.getItem('authToken');
-      const response = await fetch(`http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentIdToDelete}`, {
+      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
+        commentIdToDelete
+      )}`;
+
+      const response = await fetch(apiUrl, {
         method: 'DELETE',
         headers: {
-          'x-auth-token': token ?? '',
+          'x-auth-token': token || '',
         },
       });
 
@@ -162,8 +178,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
         throw new Error('Failed to delete comment');
       }
 
-      onCommentDeleted(commentIdToDelete);
-      setCommentIdToDelete('');
+      onCommentDeleted(commentIdToDelete); // Remove comment from local state
+      setCommentIdToDelete(''); // Reset commentIdToDelete state
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
@@ -239,79 +255,78 @@ const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, i
               {isSignedIn && (
                 <div className="mt-4">
                   <textarea
-                   className="w-full relative p-2 rounded-lg bg-white dark:bg-gray-950 dark:text-white text-black placeholder-gray-400"
-                      placeholder={`Reply to ${comment.user.username}...`}
-                        value={activeReply === comment._id ? replyText : ''}
-                          onChange={(e) => setReplyText(e.target.value)}
-                              />
-                            <FaPaperPlane
-                               className="dark:text-white text-blue-600 absolute right-8 md:top-32 top-40 cursor-pointer hover:text-blue-700 transition duration-200"
-                                size={20}
-                                 onClick={() => handleReplySubmit(comment._id)}
-                                  />
-                                </div>
-                                  )}
-                                  <ul className="mt-2 space-y-2">
-                                    {comment.replies.map((reply) => (
-                                      <li key={reply._id} className="flex items-start space-x-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                                        {reply.user.profilePicture ? (
-                                          <img
-                                            src={`http://localhost:5000/${reply.user.profilePicture}`}
-                                            alt={reply.user.username}
-                                            className="w-8 h-8 rounded-full border border-black"
-                                          />
-                                        ) : (
-                                          <FaUserCircle className="text-gray-500 w-8 h-8" />
-                                        )}
-                                        <div>
-                                          <div className="dark:text-gray-300 text-gray-700">
-                                            <h2 className="dark:text-white text-black font-bold">{reply.user.username}</h2> {reply.text}
-                                          </div>
-                                          <div className="flex space-x-2">
-                                            <FaThumbsUp
-                                              className="text-blue-500 cursor-pointer hover:text-blue-700 transition duration-200"
-                                              size={12}
-                                            />
-                                            <span>{reply.likes}</span>
-                                            <FaThumbsDown
-                                              className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
-                                              size={12}
-                                            />
-                                            <span>{reply.dislikes}</span>
-                                          </div>
-                                        </div>
-                                      </li>
-                                    ))}
-                                  </ul>
-                                </div>
-                                {showModal && commentIdToDelete === comment._id && (
-                                  <div className="absolute inset-0 flex items-center justify-center md:bg-black md:bg-opacity-30 rounded-md z-50">
-                                    <div className="bg-white dark:bg-gray-800 border border-black p-6 rounded-lg shadow-lg max-w-md mx-auto mr-4 md:mr-0">
-                                      <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Confirm Deletion</h3>
-                                      <p className="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this comment?</p>
-                                      <div className="flex justify-end space-x-4">
-                                        <button
-                                          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
-                                          onClick={handleCancelDelete}
-                                        >
-                                          Cancel
-                                        </button>
-                                        <button
-                                          className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
-                                          onClick={handleConfirmDelete}
-                                        >
-                                          Delete
-                                        </button>
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      );
-                    };
-                    
-                    export default CommentSection;
-                    
+                    className="w-full relative p-2 rounded-lg bg-white dark:bg-gray-950 dark:text-white text-black placeholder-gray-400"
+                    placeholder={`Reply to ${comment.user.username}...`}
+                    value={activeReply === comment._id ? replyText : ''}
+                    onChange={(e) => setReplyText(e.target.value)}
+                  />
+                  <FaPaperPlane
+                    className="dark:text-white text-blue-600 absolute right-8 md:top-32 top-40 cursor-pointer hover:text-blue-700 transition duration-200"
+                    size={20}
+                    onClick={() => handleReplySubmit(comment._id)}
+                  />
+                </div>
+              )}
+              <ul className="mt-2 space-y-2">
+                {comment.replies.map((reply) => (
+                  <li key={reply._id} className="flex items-start space-x-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                    {reply.user.profilePicture ? (
+                      <img
+                        src={`http://localhost:5000/${reply.user.profilePicture}`}
+                        alt={reply.user.username}
+                        className="w-8 h-8 rounded-full border border-black"
+                      />
+                    ) : (
+                      <FaUserCircle className="text-gray-500 w-8 h-8" />
+                    )}
+                    <div>
+                      <div className="dark:text-gray-300 text-gray-700">
+                        <h2 className="dark:text-white text-black font-bold">{reply.user.username}</h2> {reply.text}
+                      </div>
+                      <div className="flex space-x-2">
+                        <FaThumbsUp
+                          className="text-blue-500 cursor-pointer hover:text-blue-700 transition duration-200"
+                          size={12}
+                        />
+                        <span>{reply.likes}</span>
+                        <FaThumbsDown
+                          className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
+                          size={12}
+                        />
+                        <span>{reply.dislikes}</span>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            {showModal && commentIdToDelete === comment._id && (
+              <div className="absolute inset-0 flex items-center justify-center md:bg-black md:bg-opacity-30 rounded-md z-50">
+                <div className="bg-white dark:bg-gray-800 border border-black p-6 rounded-lg shadow-lg max-w-md mx-auto mr-4 md:mr-0">
+                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200 mb-4">Confirm Deletion</h3>
+                  <p className="text-gray-600 dark:text-gray-300 mb-6">Are you sure you want to delete this comment?</p>
+                  <div className="flex justify-end space-x-4">
+                    <button
+                      className="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transition duration-200"
+                      onClick={handleCancelDelete}
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-200"
+                      onClick={handleConfirmDelete}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default CommentSection;

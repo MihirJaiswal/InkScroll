@@ -9,7 +9,6 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { check } = require('express-validator');
-const { validationResult } = require('express-validator');
 
 const router = express.Router();
 
@@ -42,11 +41,12 @@ const upload = multer({
   }
 });
 
-const uploadFields = upload.fields([
+const uploadFields = upload.fields([ 
   { name: 'pdf', maxCount: 1 },
   { name: 'coverImage', maxCount: 1 }
 ]);
 
+// Routes
 router.post('/', authMiddleware, uploadFields, uploadManga);
 router.get('/', getMangas);
 router.get('/:title', getMangaByTitle);
