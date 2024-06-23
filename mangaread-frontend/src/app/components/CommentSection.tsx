@@ -1,18 +1,15 @@
 'use client'
 import React, { useState } from 'react';
-import { FaPaperPlane, FaUserCircle, FaTrashAlt, FaThumbsUp, FaThumbsDown } from 'react-icons/fa';
+import { FaPaperPlane, FaUserCircle, FaTrashAlt } from 'react-icons/fa';
 
 interface Comment {
   _id: string;
   user: {
     username: string;
-    profilePicture?: string;
+    profilePicture: string;
   };
   text: string;
   createdAt: string;
-  likes: number;
-  dislikes: number;
-  replies: Comment[];
 }
 
 interface CommentSectionProps {
@@ -23,16 +20,8 @@ interface CommentSectionProps {
   onCommentDeleted: (commentId: string) => void;
 }
 
-const CommentSection: React.FC<CommentSectionProps> = ({
-  mangaTitle,
-  comments,
-  isSignedIn,
-  onCommentAdded,
-  onCommentDeleted,
-}) => {
+const CommentSection: React.FC<CommentSectionProps> = ({ mangaTitle, comments, isSignedIn, onCommentAdded, onCommentDeleted }) => {
   const [commentText, setCommentText] = useState('');
-  const [replyText, setReplyText] = useState('');
-  const [activeReply, setActiveReply] = useState<string | null>(null);
   const [showModal, setShowModal] = useState(false);
   const [commentIdToDelete, setCommentIdToDelete] = useState('');
 
@@ -41,13 +30,13 @@ const CommentSection: React.FC<CommentSectionProps> = ({
 
     try {
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments`;
+      const apiUrl = `http://localhost:5000/api/mangas/${mangaTitle}/comments`;
 
       const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-auth-token': token || '',
+          'x-auth-token': token ?? '',
         },
         body: JSON.stringify({ text: commentText }),
       });
@@ -66,91 +55,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
     }
   };
 
-  const handleReplySubmit = async (commentId: string) => {
-    if (!replyText.trim()) return;
-
-    try {
-      const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
-        commentId
-      )}/replies`;
-
-      const response = await fetch(apiUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token || '',
-        },
-        body: JSON.stringify({ text: replyText }),
-      });
-
-      const responseBody = await response.json();
-
-      if (!response.ok) {
-        console.error('Failed to submit reply:', responseBody);
-        throw new Error('Failed to submit reply');
-      }
-
-      onCommentAdded(responseBody); // Update local state with the new reply
-      setReplyText(''); // Clear the reply input field
-      setActiveReply(null); // Reset active reply field
-    } catch (error) {
-      console.error('Error submitting reply:', error);
-    }
-  };
-
-  const handleLikeComment = async (commentId: string) => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
-        commentId
-      )}/like`;
-
-      const response = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-          'x-auth-token': token || '',
-        },
-      });
-
-      if (!response.ok) {
-        const errorResponse = await response.text(); // Get the raw response text
-        console.error('Failed to like comment:', errorResponse);
-        throw new Error('Failed to like comment');
-      }
-
-      // Handle the update to the comment's like count here if needed
-    } catch (error) {
-      console.error('Error liking comment:', error);
-    }
-  };
-
-  const handleDislikeComment = async (commentId: string) => {
-    try {
-      const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
-        commentId
-      )}/dislike`;
-
-      const response = await fetch(apiUrl, {
-        method: 'PUT',
-        headers: {
-          'x-auth-token': token || '',
-        },
-      });
-
-      if (!response.ok) {
-        const errorResponse = await response.text(); // Get the raw response text
-        console.error('Failed to dislike comment:', errorResponse);
-        throw new Error('Failed to dislike comment');
-      }
-
-      // Handle the update to the comment's dislike count here if needed
-    } catch (error) {
-      console.error('Error disliking comment:', error);
-    }
-  };
-
   const handleCommentDelete = (commentId: string) => {
     setShowModal(true);
     setCommentIdToDelete(commentId);
@@ -161,14 +65,10 @@ const CommentSection: React.FC<CommentSectionProps> = ({
       setShowModal(false);
 
       const token = localStorage.getItem('authToken');
-      const apiUrl = `http://localhost:5000/api/mangas/${encodeURIComponent(mangaTitle)}/comments/${encodeURIComponent(
-        commentIdToDelete
-      )}`;
-
-      const response = await fetch(apiUrl, {
+      const response = await fetch(`http://localhost:5000/api/mangas/${mangaTitle}/comments/${commentIdToDelete}`, {
         method: 'DELETE',
         headers: {
-          'x-auth-token': token || '',
+          'x-auth-token': token ?? '',
         },
       });
 
@@ -178,8 +78,8 @@ const CommentSection: React.FC<CommentSectionProps> = ({
         throw new Error('Failed to delete comment');
       }
 
-      onCommentDeleted(commentIdToDelete); // Remove comment from local state
-      setCommentIdToDelete(''); // Reset commentIdToDelete state
+      onCommentDeleted(commentIdToDelete);
+      setCommentIdToDelete('');
     } catch (error) {
       console.error('Error deleting comment:', error);
     }
@@ -238,67 +138,6 @@ const CommentSection: React.FC<CommentSectionProps> = ({
                   )}
                 </div>
               </div>
-              <div className="flex space-x-4">
-                <FaThumbsUp
-                  className="text-blue-500 cursor-pointer hover:text-blue-700 transition duration-200"
-                  size={16}
-                  onClick={() => handleLikeComment(comment._id)}
-                />
-                <span>{comment.likes}</span>
-                <FaThumbsDown
-                  className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
-                  size={16}
-                  onClick={() => handleDislikeComment(comment._id)}
-                />
-                <span>{comment.dislikes}</span>
-              </div>
-              {isSignedIn && (
-                <div className="mt-4">
-                  <textarea
-                    className="w-full relative p-2 rounded-lg bg-white dark:bg-gray-950 dark:text-white text-black placeholder-gray-400"
-                    placeholder={`Reply to ${comment.user.username}...`}
-                    value={activeReply === comment._id ? replyText : ''}
-                    onChange={(e) => setReplyText(e.target.value)}
-                  />
-                  <FaPaperPlane
-                    className="dark:text-white text-blue-600 absolute right-8 md:top-32 top-40 cursor-pointer hover:text-blue-700 transition duration-200"
-                    size={20}
-                    onClick={() => handleReplySubmit(comment._id)}
-                  />
-                </div>
-              )}
-              <ul className="mt-2 space-y-2">
-                {comment.replies.map((reply) => (
-                  <li key={reply._id} className="flex items-start space-x-4 p-2 bg-gray-100 dark:bg-gray-700 rounded-lg">
-                    {reply.user.profilePicture ? (
-                      <img
-                        src={`http://localhost:5000/${reply.user.profilePicture}`}
-                        alt={reply.user.username}
-                        className="w-8 h-8 rounded-full border border-black"
-                      />
-                    ) : (
-                      <FaUserCircle className="text-gray-500 w-8 h-8" />
-                    )}
-                    <div>
-                      <div className="dark:text-gray-300 text-gray-700">
-                        <h2 className="dark:text-white text-black font-bold">{reply.user.username}</h2> {reply.text}
-                      </div>
-                      <div className="flex space-x-2">
-                        <FaThumbsUp
-                          className="text-blue-500 cursor-pointer hover:text-blue-700 transition duration-200"
-                          size={12}
-                        />
-                        <span>{reply.likes}</span>
-                        <FaThumbsDown
-                          className="text-red-500 cursor-pointer hover:text-red-700 transition duration-200"
-                          size={12}
-                        />
-                        <span>{reply.dislikes}</span>
-                      </div>
-                    </div>
-                  </li>
-                ))}
-              </ul>
             </div>
             {showModal && commentIdToDelete === comment._id && (
               <div className="absolute inset-0 flex items-center justify-center md:bg-black md:bg-opacity-30 rounded-md z-50">
