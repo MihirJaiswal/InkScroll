@@ -2,14 +2,14 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import CommentSection from '../components/CommentSection';
+import Navbar from '../../components/Navbar';
+import Footer from '../../components/Footer';
+import CommentSection from '../../components/CommentSection';
 import { FaUserCircle, FaTags, FaStar } from 'react-icons/fa';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import ShimmerEffect from '../components/Shimmer2';
+import ShimmerEffect from '../../components/Shimmer2';
 
 interface Chapter {
   _id: string;

@@ -1,9 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import Navbar from '../components/Navbar';
-import Footer from '../components/Footer';
-import UserMangaList from './MyManga';
 import Loader from './Loader';
 
 interface UserProfile {

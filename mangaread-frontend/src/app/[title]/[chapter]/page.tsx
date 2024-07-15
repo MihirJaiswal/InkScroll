@@ -2,10 +2,10 @@
 import React, { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import Navbar from '../../components/Navbar';
-import Footer from '../../components/Footer';
+import Navbar from '../../../components/Navbar';
+import Footer from '../../../components/Footer';
 import { FaArrowRight, FaArrowLeft, FaTrash } from 'react-icons/fa';
-import ShimmerEffect from '@/app/components/Shimmer2';
+import ShimmerEffect from '../../../components/Shimmer2';
 
 interface Chapter {
   _id: string;

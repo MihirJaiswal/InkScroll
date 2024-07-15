@@ -1,9 +1,7 @@
 import React from 'react'
-import UploadManga from '../components/Upload'
-import Navbar from '../components/Navbar'
-import Footer from '../components/Footer'
-import UploadChapter from '../components/AddChapter'
-import Toggler from '../components/Toggler'
+import Navbar from '../../components/Navbar'
+import Footer from '../../components/Footer'
+import Toggler from '../../components/Toggler'
 
 const page = () => {
   return (

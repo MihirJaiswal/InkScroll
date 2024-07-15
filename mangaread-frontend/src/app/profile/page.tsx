@@ -1,8 +1,8 @@
 import React from 'react'
-import ProfilePage from '../components/ProfilePage'
-import Navbar from '../components/Navbar'
-import UserMangaList from '../components/MyManga'
-import Footer from '../components/Footer'
+import ProfilePage from '../../components/ProfilePage'
+import Navbar from '../../components/Navbar'
+import UserMangaList from '../../components/MyManga'
+import Footer from '../../components/Footer'
 
 const page = () => {
   return (

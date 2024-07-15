@@ -3,8 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Image from 'next/image';
-import logo from '../../../public/Designer__53_-photoaidcom-cropped-removebg-preview (2).png';
+
 
 const UploadChapter: React.FC = () => {
   const [authToken, setAuthToken] = useState<string | null>(null);

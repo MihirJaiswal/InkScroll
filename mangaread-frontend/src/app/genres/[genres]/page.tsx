@@ -1,6 +1,6 @@
-import Footer from '@/app/components/Footer'
-import GenreMangas from '@/app/components/Genre'
-import Navbar from '@/app/components/Navbar'
+import Footer from '../../../components/Footer'
+import GenreMangas from '../../../components/Genre'
+import Navbar from '../../../components/Navbar'
 import React from 'react'
 
 const page = () => {

@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import React from 'react';
-import loader from '../../../public/loader.gif';
+import loader from '../../public/loader.gif';
 
 const Loader = () => {
   return (
