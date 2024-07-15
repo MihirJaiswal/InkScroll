@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import logo from '../../public/logo.png'
 import Image from 'next/image';
+import bg1 from '../../public/bg.jpg'
+import bg2 from '../../public/bg2.jpg'
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -38,7 +40,7 @@ const Login = () => {
   return (
     <div className="flex">
       <div className="flex-1 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-20 h-full -z-30" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')`}}></div>
+      <div className="absolute inset-0 bg-cover bg-center opacity-20 h-full -z-30" style={{ background: `url('/bg.jpg')`}}></div>
         <div className="relative max-w-md w-full mx-auto p-8 md:p-10 bg-black rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-60 border border-gray-100">
           <div className="flex flex-col items-center justify-center mb-8">
             <Image 
@@ -80,7 +82,7 @@ const Login = () => {
         </div>
       </div>
       <div className="w-full hidden md:block relative mx-16 mt-2" style={{ height: "78vh", width:"50vw", clipPath: "polygon(15% 0, 100% 0%, 100% 52%, 74% 52%, 75% 100%, 51% 50%, 17% 50%)" }}>
-        <div className="absolute inset-0 bg-cover bg-center" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
+        <div className="absolute inset-0 bg-contain bg-center" style={{ background: `url('/bg2.jpg')` }}></div>
       </div>
     </div>
   );

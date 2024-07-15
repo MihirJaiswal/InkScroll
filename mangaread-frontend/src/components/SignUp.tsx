@@ -38,7 +38,7 @@ const Signup = () => {
 
   return (
     <div className="md:py-20 py-4  flex items-center justify-center relative p-4">
-      <div className="absolute inset-0 bg-cover bg-center opacity-30" style={{ background: `url('https://i.ibb.co/cCWJYC4/bg.jpg')` }}></div>
+      <div className="absolute inset-0 bg-contain bg-center opacity-30" style={{ background: `url('/bg2.jpg')` }}></div>
       <div className="relative z-10 bg-black p-8 rounded-lg shadow-lg max-w-md w-full bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-70 border border-gray-100">
         <h2 className="text-3xl font-bold text-white mb-6 text-center">Sign Up</h2>
         <form onSubmit={handleSubmit}>
